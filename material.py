@@ -1,4 +1,4 @@
-#filename = "/home/ariyapour/Dropbox/Master Thesis_CG/material.py"
+#filename = "/home/ariyapour/git/blender-exporter/material.py"
 #exec(compile(open(filename).read(), filename, 'exec'))
 #bpy.data.materials['Material'].node_tree.nodes['Refraction BSDF'].inputs['Color'].links[0].from_node.name
 
@@ -6,20 +6,35 @@ import bpy
 import json
 import copy
 
+mainPath= "/home/ariyapour/git/blender-exporter"
+
+
 def followLinks(node_in):
     for n_inputs in node_in.inputs:
         if n_inputs.name != "Volume" and n_inputs.name != "Displacement" :
           print (n_inputs.name)
+          ### we have to store these as shader parameters
           if not n_inputs.links:
             if hasattr(n_inputs.default_value, '__iter__'):
-              for value in n_inputs.default_value:
-                print (value)
+                ## Write the shader parameters ###############################################
+              if n_inputs.type == "RGBA" and n_inputs.name == "Color":  
+                shaderParameters.write("<float3 name=\""+ node_in.name.replace(" ", "")+n_inputs.name.replace(" ", "")+"> ")
+                ## add the values
+                for i in range(0,3) :
+                  print (n_inputs.default_value[i])
+                  shaderParameters.write(str(n_inputs.default_value[i])+ " " )
+                shaderParameters.write("</float3>\n")
             else:
                 print(n_inputs.default_value)
+                shaderParameters.write("<float name=\""+ node_in.name.replace(" ", "")+n_inputs.name.replace(" ", "")+"> " + str(n_inputs.default_value) + "</float>\n")
+                
+                
+                
+                
         for node_links in n_inputs.links:
             print("going to " + node_links.from_node.name + " from " + n_inputs.name)
             if node_links.from_node.name == "Diffuse BSDF":
-              diffuseFile = open('ast_files/diffuseAst.json','r')
+              diffuseFile = open(mainPath+'/ast_files/diffuseAst.json','r')
               diffuseJson = json.load(diffuseFile)
               initJson["body"][0]["body"]["body"][0]["argument"] = diffuseJson
             if node_links.from_node.name == "Math":
@@ -39,7 +54,7 @@ def followLinks(node_in):
    
 
             if node_links.from_node.name == "Voronoi Texture":
-              voronoiFile = open('ast_files/voronoi.json','r')
+              voronoiFile = open(mainPath+'/ast_files/voronoi.json','r')
               voronoi = json.load(voronoiFile)
               initJson["body"][0]["body"]["body"].insert(0,voronoi["voronoiCall"])
               initJson["body"].append(voronoi["voronoiFunction"])
@@ -51,7 +66,7 @@ def followLinks(node_in):
               print("distribution: "+ str(node_links.from_node.distribution))
               if (node_links.from_node.outputs[0].links[0].to_node.name != "Mix Shader"):
                 if node_links.from_node.name == "Glossy BSDF" :
-                  glossyBSDFFile = open('ast_files/glossyBSDFAst.json','r')
+                  glossyBSDFFile = open(mainPath+'/ast_files/glossyBSDFAst.json','r')
                   glossyBSDF = json.load(glossyBSDFFile)
                   initJson["body"][0]["body"]["body"][0]["argument"] = glossyBSDF
 
@@ -62,7 +77,7 @@ def followLinks(node_in):
                 if node_links.from_node.inputs[0].links[0].from_node.name == "Layer Weight":
 
                   ###add refract to shade()###########################################
-                  addRefractfile = open('ast_files/addRefract_test.json','r')
+                  addRefractfile = open(mainPath+'/ast_files/addRefract_test.json','r')
                   addRefract = json.load(addRefractfile)
                   objectAst = copy.deepcopy(initJson["body"][0]["body"]["body"][0]["argument"])
                   initJson["body"][0]["body"]["body"][0]["argument"]["callee"] = {}
@@ -75,7 +90,7 @@ def followLinks(node_in):
                   ###################################################################
 
                   ###add reflect to shade()###########################################
-                  addReflectfile = open('ast_files/addReflect_test.json','r')
+                  addReflectfile = open(mainPath+'/ast_files/addReflect_test.json','r')
                   addReflect = json.load(addReflectfile)
                   objectAst = copy.deepcopy(initJson["body"][0]["body"]["body"][0]["argument"])
                   initJson["body"][0]["body"]["body"][0]["argument"]["callee"] = {}
@@ -88,7 +103,7 @@ def followLinks(node_in):
                   ###################################################################
                   
                   ####### add fresnel################################################
-                  fresnelFile = open('ast_files/fresnelAst_call.json','r')
+                  fresnelFile = open(mainPath+'/ast_files/fresnelAst_call.json','r')
                   fresnel = json.load(fresnelFile)
                   initJson["body"].append(fresnel["body"][0])
                   initJson["body"].append(fresnel["body"][1])
@@ -100,9 +115,15 @@ def followLinks(node_in):
               print ("Component: "+node_links.from_node.component)
             if node_links.from_node.name == "Subsurface Scattering":
               print ("Component: "+node_links.from_node.falloff) 
+              
+              
+              
             followLinks(node_links.from_node)
 
-jsonFinal = open('ast_files/shaders.json', 'r')
+
+jsonFinal = open(mainPath+'/ast_files/shaders.json', 'r')
+shaderParameters = open(mainPath+'/ast_files/shader_parameters.txt', 'w')
+shaderParameters.write("<data>\n")
 initJson = json.load(jsonFinal)
 for mat in bpy.data.materials:
     print("Traversing " + mat.name)
@@ -111,8 +132,10 @@ for mat in bpy.data.materials:
             # we start at the material output node
             print("Starting at " + mat_node.name) 
             followLinks(mat_node)
-final = open('ast_files/finalAst.json','w')
+final = open(mainPath+'/ast_files/finalAst.json','w')
 json.dump(initJson,final)
+shaderParameters.write("<\data>")
+shaderParameters.close()
 final.close()
 jsonFinal.close()
 
