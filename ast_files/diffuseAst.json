@@ -1,0 +1,45 @@
+ {
+                            "type": "CallExpression",
+                            "callee": {
+                                "type": "MemberExpression",
+                                "computed": false,
+                                "object": {
+                                    "type": "NewExpression",
+                                    "callee": {
+                                        "type": "Identifier",
+                                        "name": "Shade"
+                                    },
+                                    "arguments": []
+                                },
+                                "property": {
+                                    "type": "Identifier",
+                                    "name": "diffuse"
+                                }
+                            },
+                            "arguments": [
+                                {
+                                    "type": "MemberExpression",
+                                    "computed": false,
+                                    "object": {
+                                        "type": "Identifier",
+                                        "name": "env"
+                                    },
+                                    "property": {
+                                        "type": "Identifier",
+                                        "name": "diffuseColor"
+                                    }
+                                },
+                                {
+                                    "type": "MemberExpression",
+                                    "computed": false,
+                                    "object": {
+                                        "type": "Identifier",
+                                        "name": "env"
+                                    },
+                                    "property": {
+                                        "type": "Identifier",
+                                        "name": "normal"
+                                    }
+                                }
+                            ]
+                        }

@@ -1,0 +1,38 @@
+{
+                            "type": "CallExpression",
+                            "callee": {
+                                "type": "MemberExpression",
+                                "computed": false,
+                                "object": {
+                                    "type": "NewExpression",
+                                    "callee": {
+                                        "type": "Identifier",
+                                        "name": "Shade"
+                                    },
+                                    "arguments": []
+                                },
+                                "property": {
+                                    "type": "Identifier",
+                                    "name": "reflect"
+                                }
+                            },
+                            "arguments": [
+                                {
+                                    "type": "MemberExpression",
+                                    "computed": false,
+                                    "object": {
+                                        "type": "Identifier",
+                                        "name": "env"
+                                    },
+                                    "property": {
+                                        "type": "Identifier",
+                                        "name": "normal"
+                                    }
+                                },
+                                {
+                                    "type": "Literal",
+                                    "value": 1,
+                                    "raw": "1"
+                                }
+                            ]
+                        }

@@ -1,0 +1,38 @@
+{
+    "type": "Program",
+    "body": [
+        {
+            "type": "FunctionDeclaration",
+            "id": {
+                "type": "Identifier",
+                "name": "shade"
+            },
+            "params": [
+                {
+                    "type": "Identifier",
+                    "name": "env"
+                }
+            ],
+            "defaults": [],
+            "body": {
+                "type": "BlockStatement",
+                "body": [
+                    {
+                        "type": "ReturnStatement",
+                        "argument": {
+                            "type": "NewExpression",
+                            "callee": {
+                                "type": "Identifier",
+                                "name": "Shade"
+                            },
+                            "arguments": []
+                        }
+                    }
+                ]
+            },
+            "rest": null,
+            "generator": false,
+            "expression": false
+        }
+    ]
+}

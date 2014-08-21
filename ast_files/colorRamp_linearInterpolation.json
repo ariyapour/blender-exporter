@@ -1,0 +1,396 @@
+{
+    "type": "Program",
+    "body": [
+        {
+            "type": "FunctionDeclaration",
+            "id": {
+                "type": "Identifier",
+                "name": "colorRamp_linearInterpolation"
+            },
+            "params": [
+                {
+                    "type": "Identifier",
+                    "name": "c1"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "p1"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "c2"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "p2"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "c3"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "p3"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "c4"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "p4"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "t"
+                }
+            ],
+            "defaults": [],
+            "body": {
+                "type": "BlockStatement",
+                "body": [
+                    {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "result"
+                                },
+                                "init": {
+                                    "type": "NewExpression",
+                                    "callee": {
+                                        "type": "Identifier",
+                                        "name": "Vec3"
+                                    },
+                                    "arguments": []
+                                }
+                            }
+                        ],
+                        "kind": "var"
+                    },
+                    {
+                        "type": "IfStatement",
+                        "test": {
+                            "type": "BinaryExpression",
+                            "operator": ">",
+                            "left": {
+                                "type": "Identifier",
+                                "name": "t"
+                            },
+                            "right": {
+                                "type": "Identifier",
+                                "name": "p4"
+                            }
+                        },
+                        "consequent": {
+                            "type": "ExpressionStatement",
+                            "expression": {
+                                "type": "AssignmentExpression",
+                                "operator": "=",
+                                "left": {
+                                    "type": "Identifier",
+                                    "name": "result"
+                                },
+                                "right": {
+                                    "type": "Identifier",
+                                    "name": "c4"
+                                }
+                            }
+                        },
+                        "alternate": {
+                            "type": "IfStatement",
+                            "test": {
+                                "type": "BinaryExpression",
+                                "operator": ">",
+                                "left": {
+                                    "type": "Identifier",
+                                    "name": "t"
+                                },
+                                "right": {
+                                    "type": "Identifier",
+                                    "name": "p3"
+                                }
+                            },
+                            "consequent": {
+                                "type": "ExpressionStatement",
+                                "expression": {
+                                    "type": "AssignmentExpression",
+                                    "operator": "=",
+                                    "left": {
+                                        "type": "Identifier",
+                                        "name": "result"
+                                    },
+                                    "right": {
+                                        "type": "CallExpression",
+                                        "callee": {
+                                            "type": "Identifier",
+                                            "name": "linearColorInterpolation"
+                                        },
+                                        "arguments": [
+                                            {
+                                                "type": "Identifier",
+                                                "name": "p3"
+                                            },
+                                            {
+                                                "type": "Identifier",
+                                                "name": "p4"
+                                            },
+                                            {
+                                                "type": "Identifier",
+                                                "name": "c3"
+                                            },
+                                            {
+                                                "type": "Identifier",
+                                                "name": "c4"
+                                            },
+                                            {
+                                                "type": "Identifier",
+                                                "name": "t"
+                                            }
+                                        ]
+                                    }
+                                }
+                            },
+                            "alternate": {
+                                "type": "IfStatement",
+                                "test": {
+                                    "type": "BinaryExpression",
+                                    "operator": ">",
+                                    "left": {
+                                        "type": "Identifier",
+                                        "name": "t"
+                                    },
+                                    "right": {
+                                        "type": "Identifier",
+                                        "name": "p2"
+                                    }
+                                },
+                                "consequent": {
+                                    "type": "ExpressionStatement",
+                                    "expression": {
+                                        "type": "AssignmentExpression",
+                                        "operator": "=",
+                                        "left": {
+                                            "type": "Identifier",
+                                            "name": "result"
+                                        },
+                                        "right": {
+                                            "type": "CallExpression",
+                                            "callee": {
+                                                "type": "Identifier",
+                                                "name": "linearColorInterpolation"
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "type": "Identifier",
+                                                    "name": "p2"
+                                                },
+                                                {
+                                                    "type": "Identifier",
+                                                    "name": "p3"
+                                                },
+                                                {
+                                                    "type": "Identifier",
+                                                    "name": "c2"
+                                                },
+                                                {
+                                                    "type": "Identifier",
+                                                    "name": "c3"
+                                                },
+                                                {
+                                                    "type": "Identifier",
+                                                    "name": "t"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                "alternate": {
+                                    "type": "ExpressionStatement",
+                                    "expression": {
+                                        "type": "AssignmentExpression",
+                                        "operator": "=",
+                                        "left": {
+                                            "type": "Identifier",
+                                            "name": "result"
+                                        },
+                                        "right": {
+                                            "type": "CallExpression",
+                                            "callee": {
+                                                "type": "Identifier",
+                                                "name": "linearColorInterpolation"
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "type": "Identifier",
+                                                    "name": "p1"
+                                                },
+                                                {
+                                                    "type": "Identifier",
+                                                    "name": "p2"
+                                                },
+                                                {
+                                                    "type": "Identifier",
+                                                    "name": "c1"
+                                                },
+                                                {
+                                                    "type": "Identifier",
+                                                    "name": "c2"
+                                                },
+                                                {
+                                                    "type": "Identifier",
+                                                    "name": "t"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        "type": "ReturnStatement",
+                        "argument": {
+                            "type": "Identifier",
+                            "name": "result"
+                        }
+                    }
+                ]
+            },
+            "rest": null,
+            "generator": false,
+            "expression": false
+        },
+        {
+            "type": "FunctionDeclaration",
+            "id": {
+                "type": "Identifier",
+                "name": "linearColorInterpolation"
+            },
+            "params": [
+                {
+                    "type": "Identifier",
+                    "name": "x"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "y"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "fX"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "fY"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "t"
+                }
+            ],
+            "defaults": [],
+            "body": {
+                "type": "BlockStatement",
+                "body": [
+                    {
+                        "type": "ReturnStatement",
+                        "argument": {
+                            "type": "CallExpression",
+                            "callee": {
+                                "type": "MemberExpression",
+                                "computed": false,
+                                "object": {
+                                    "type": "Identifier",
+                                    "name": "fX"
+                                },
+                                "property": {
+                                    "type": "Identifier",
+                                    "name": "add"
+                                }
+                            },
+                            "arguments": [
+                                {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                        "type": "MemberExpression",
+                                        "computed": false,
+                                        "object": {
+                                            "type": "CallExpression",
+                                            "callee": {
+                                                "type": "MemberExpression",
+                                                "computed": false,
+                                                "object": {
+                                                    "type": "CallExpression",
+                                                    "callee": {
+                                                        "type": "MemberExpression",
+                                                        "computed": false,
+                                                        "object": {
+                                                            "type": "Identifier",
+                                                            "name": "fY"
+                                                        },
+                                                        "property": {
+                                                            "type": "Identifier",
+                                                            "name": "sub"
+                                                        }
+                                                    },
+                                                    "arguments": [
+                                                        {
+                                                            "type": "Identifier",
+                                                            "name": "fX"
+                                                        }
+                                                    ]
+                                                },
+                                                "property": {
+                                                    "type": "Identifier",
+                                                    "name": "div"
+                                                }
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "type": "BinaryExpression",
+                                                    "operator": "-",
+                                                    "left": {
+                                                        "type": "Identifier",
+                                                        "name": "y"
+                                                    },
+                                                    "right": {
+                                                        "type": "Identifier",
+                                                        "name": "x"
+                                                    }
+                                                }
+                                            ]
+                                        },
+                                        "property": {
+                                            "type": "Identifier",
+                                            "name": "mul"
+                                        }
+                                    },
+                                    "arguments": [
+                                        {
+                                            "type": "BinaryExpression",
+                                            "operator": "-",
+                                            "left": {
+                                                "type": "Identifier",
+                                                "name": "t"
+                                            },
+                                            "right": {
+                                                "type": "Identifier",
+                                                "name": "x"
+                                            }
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "rest": null,
+            "generator": false,
+            "expression": false
+        }
+    ]
+}

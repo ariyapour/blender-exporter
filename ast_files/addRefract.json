@@ -1,0 +1,51 @@
+{"argument": {
+                            "type": "CallExpression",
+                            "callee": {
+                                "type": "MemberExpression",
+                                "computed": false,
+                                "object": {
+                                    "type": "NewExpression",
+                                    "callee": {
+                                        "type": "Identifier",
+                                        "name": "Shade"
+                                    },
+                                    "arguments": []
+                                },
+                                "property": {
+                                    "type": "Identifier",
+                                    "name": "refract"
+                                }
+                            },
+                            "arguments": [
+                                {
+                                    "type": "MemberExpression",
+                                    "computed": false,
+                                    "object": {
+                                        "type": "Identifier",
+                                        "name": "env"
+                                    },
+                                    "property": {
+                                        "type": "Identifier",
+                                        "name": "normal"
+                                    }
+                                },
+                                {
+                                    "type": "Identifier",
+                                    "name": "eta"
+                                },
+                                {
+                                    "type": "BinaryExpression",
+                                    "operator": "-",
+                                    "left": {
+                                        "type": "Literal",
+                                        "value": 1,
+                                        "raw": "1"
+                                    },
+                                    "right": {
+                                        "type": "Identifier",
+                                        "name": "fresnel"
+                                    }
+                                }
+                            ]
+                        }
+}
