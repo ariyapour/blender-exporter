@@ -18,7 +18,7 @@ def followLinks(node_in):
             if hasattr(n_inputs.default_value, '__iter__'):
                 ## Write the shader parameters ###############################################
               if n_inputs.type == "RGBA" and n_inputs.name == "Color":  
-                shaderParameters.write("<float3 name=\""+ node_in.name.replace(" ", "")+n_inputs.name.replace(" ", "")+"> ")
+                shaderParameters.write("<float3 name=\""+ node_in.name.replace(" ", "")+n_inputs.name.replace(" ", "")+"\"> ")
                 ## add the values
                 for i in range(0,3) :
                   print (n_inputs.default_value[i])
@@ -26,17 +26,31 @@ def followLinks(node_in):
                 shaderParameters.write("</float3>\n")
             else:
                 print(n_inputs.default_value)
-                shaderParameters.write("<float name=\""+ node_in.name.replace(" ", "")+n_inputs.name.replace(" ", "")+"> " + str(n_inputs.default_value) + "</float>\n")
+                shaderParameters.write("<float name=\""+ node_in.name.replace(" ", "")+n_inputs.name.replace(" ", "")+"\"> " + str(n_inputs.default_value) + "</float>\n")
                 
                 
                 
                 
         for node_links in n_inputs.links:
+                                ##second node                          ##original node
             print("going to " + node_links.from_node.name + " from " + n_inputs.name)
             if node_links.from_node.name == "Diffuse BSDF":
               diffuseFile = open(mainPath+'/ast_files/diffuseAst.json','r')
               diffuseJson = json.load(diffuseFile)
+              ## for each node we have to check if the inputs are linked then we have to change the name in order for function calls
+              for input in node_links.from_node.inputs :
+                  if input.is_linked:
+                      if input.name == "Color":
+                          diffuseJson["arguments"].pop(0)
+                          diffuseJson["arguments"]. insert(0, {"type": "Identifier","name": node_links.from_node.name.replace(" ", "")+input.name.replace(" ", "")})
+                      if input.name == "Normal":
+                          diffuseJson["arguments"].pop(1)
+                          diffuseJson["arguments"]. insert(1, {"type": "Identifier","name": node_links.from_node.name.replace(" ", "")+input.name.replace(" ", "")})
+              
               initJson["body"][0]["body"]["body"][0]["argument"] = diffuseJson
+              
+              
+              ##firs we have to make a call with the parameter of the original node in left and call of the second node in right then add the second node to the end of javascriptcode
             if node_links.from_node.name == "Math":
               print ("operation: "+node_links.from_node.operation + "\nClamp:" + str(node_links.from_node.use_clamp))
             if node_links.from_node.name == "Vector Math":
@@ -56,6 +70,8 @@ def followLinks(node_in):
             if node_links.from_node.name == "Voronoi Texture":
               voronoiFile = open(mainPath+'/ast_files/voronoi.json','r')
               voronoi = json.load(voronoiFile)
+              ##the bug probably here
+              voronoi["voronoiCall"]["declarations"][0]["id"]["name"] =  node_in.name.replace(" ", "")+n_inputs.name.replace(" ", "")
               initJson["body"][0]["body"]["body"].insert(0,voronoi["voronoiCall"])
               initJson["body"].append(voronoi["voronoiFunction"])
 
@@ -65,10 +81,25 @@ def followLinks(node_in):
             if (node_links.from_node.name == "Glossy BSDF" or node_links.from_node.name == "Refraction BSDF" or node_links.from_node.name == "Glass BSDF"):
               print("distribution: "+ str(node_links.from_node.distribution))
               if (node_links.from_node.outputs[0].links[0].to_node.name != "Mix Shader"):
+                  ##reflection
                 if node_links.from_node.name == "Glossy BSDF" :
                   glossyBSDFFile = open(mainPath+'/ast_files/glossyBSDFAst.json','r')
                   glossyBSDF = json.load(glossyBSDFFile)
                   initJson["body"][0]["body"]["body"][0]["argument"] = glossyBSDF
+                  ##Refraction
+                  
+                if node_links.from_node.name == "Refraction BSDF" :
+                  addRefractfile = open(mainPath+'/ast_files/addRefract_test.json','r')
+                  addRefract = json.load(addRefractfile)
+                  objectAst = copy.deepcopy(initJson["body"][0]["body"]["body"][0]["argument"])
+                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"] = {}
+                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["object"] = objectAst
+                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["type"] = "MemberExpression"
+                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["computed"] = False
+                  initJson["body"][0]["body"]["body"][0]["argument"]["arguments"]= addRefract["arguments"]
+                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["property"] = addRefract["property"]
+                  initJson["body"][0]["body"]["body"][0]["argument"]["type"] = "CallExpression"
+                  
 
 
 

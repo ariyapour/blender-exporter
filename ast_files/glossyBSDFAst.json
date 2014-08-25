@@ -30,6 +30,18 @@
                                     }
                                 },
                                 {
+                                    "type": "MemberExpression",
+                                    "computed": false,
+                                    "object": {
+                                        "type": "Identifier",
+                                        "name": "env"
+                                    },
+                                    "property": {
+                                        "type": "Identifier",
+                                        "name": "GlossyBSDFColor"
+                                    }
+                                },
+                                {
                                     "type": "Literal",
                                     "value": 1,
                                     "raw": "1"
