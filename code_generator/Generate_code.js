@@ -3,9 +3,9 @@
 
 exports.generate = function ()
 {
-var escodegen = require('escodegen')
-var json = require('../ast_files/finalAst.json')
-var fs = require('fs')
-fs.writeFile("./code.js",escodegen.generate(json))
-return;
+	var escodegen = require('escodegen')
+	var json = require('/home/ariyapour/git/blender-exporter/ast_files/finalAst.json')
+	var fs = require('fs')
+	fs.writeFile("./code.js",escodegen.generate(json))
+	return;
 }

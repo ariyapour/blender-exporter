@@ -67,7 +67,7 @@ def followLinks(node_in):
               print ("Space: "+node_links.from_node.space)   
    
 
-            if node_links.from_node.name == "Voronoi Texture":
+            if node_links.from_node.name == "Voronoi Texture":  ##for voronoi texture for now we dont check the inputs and we assume we are not getting inputs!
               voronoiFile = open(mainPath+'/ast_files/voronoi.json','r')
               voronoi = json.load(voronoiFile)
               ##the bug probably here

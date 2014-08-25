@@ -1,4 +1,5 @@
 {
+"voronoiFunction":{
     "type": "Program",
     "body": [
         {
@@ -3341,4 +3342,51 @@
             "expression": false
         }
     ]
+}
+,"voronoiCall": {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "distance"
+                                },
+                                "init": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                        "type": "Identifier",
+                                        "name": "vronoiNoise"
+                                    },
+                                    "arguments": [
+                                        {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                                "type": "Identifier",
+                                                "name": "env"
+                                            },
+                                            "property": {
+                                                "type": "Identifier",
+                                                "name": "texcoord"
+                                            }
+                                        },
+                                        {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                                "type": "Identifier",
+                                                "name": "env"
+                                            },
+                                            "property": {
+                                                "type": "Identifier",
+                                                "name": "scale"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "kind": "var"
+                    }
 }

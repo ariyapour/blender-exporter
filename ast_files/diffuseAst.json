@@ -17,7 +17,18 @@
                                 }
                             },
                             "arguments": [
-                               {},
+                                {
+                                    "type": "MemberExpression",
+                                    "computed": false,
+                                    "object": {
+                                        "type": "Identifier",
+                                        "name": "env"
+                                    },
+                                    "property": {
+                                        "type": "Identifier",
+                                        "name": "DiffuseBSDFColor"
+                                    }
+                                },
                                 {
                                     "type": "MemberExpression",
                                     "computed": false,
