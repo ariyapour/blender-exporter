@@ -74,6 +74,18 @@ def followLinks(node_in):
               voronoi["voronoiCall"]["declarations"][0]["id"]["name"] =  node_in.name.replace(" ", "")+n_inputs.name.replace(" ", "")
               initJson["body"][0]["body"]["body"].insert(0,voronoi["voronoiCall"])
               initJson["body"].append(voronoi["voronoiFunction"])
+            
+            if node_links.from_node.name == "ColorRamp":
+              colorRampFile = open(mainPath+'/ast_files/colorRamp_linearInterpolation.json','r')
+              colorRamp = json.load(colorRampFile)
+              colorRamp["colorRampCall"]["declarations"][0]["id"]["name"] =  node_in.name.replace(" ", "")+n_inputs.name.replace(" ", "")
+              initJson["body"][0]["body"]["body"].insert(0,colorRamp["colorRampCall"])
+              initJson["body"].append(colorRamp["colorRampFunction"])
+              for p in range(1,len(node_links.from_node.color_ramp.elements)):
+                  shaderParameters.write("<float name=\"position"+ str(p) +"\"> " + str(node_links.from_node.color_ramp.elements[p].position) + "</float>\n")
+                  shaderParameters.write("<float3 name=\"colorRamp"+ str(p) +"\"> " + str(node_links.from_node.color_ramp.elements[p].color[0]) + " " + str(node_links.from_node.color_ramp.elements[p].color[1]) + " " +str(node_links.from_node.color_ramp.elements[p].color[2]) + "</float3>\n")
+                  
+                  
 
 
 

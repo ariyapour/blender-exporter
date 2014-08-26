@@ -1,7 +1,8 @@
 {
+"colorRampFunction":{
     "type": "Program",
     "body": [
-        {
+	{
             "type": "FunctionDeclaration",
             "id": {
                 "type": "Identifier",
@@ -393,4 +394,140 @@
             "expression": false
         }
     ]
+}
+,
+"colorRampCall":{
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "variable"
+                                },
+                                "init": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                        "type": "Identifier",
+                                        "name": "colorRamp_linearInterpolation"
+                                    },
+                                    "arguments": [
+                                        {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                                "type": "Identifier",
+                                                "name": "env"
+                                            },
+                                            "property": {
+                                                "type": "Identifier",
+                                                "name": "colorRamp1"
+                                            }
+                                        },
+                                        {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                                "type": "Identifier",
+                                                "name": "env"
+                                            },
+                                            "property": {
+                                                "type": "Identifier",
+                                                "name": "position1"
+                                            }
+                                        },
+                                        {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                                "type": "Identifier",
+                                                "name": "env"
+                                            },
+                                            "property": {
+                                                "type": "Identifier",
+                                                "name": "colorRamp2"
+                                            }
+                                        },
+                                        {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                                "type": "Identifier",
+                                                "name": "env"
+                                            },
+                                            "property": {
+                                                "type": "Identifier",
+                                                "name": "position2"
+                                            }
+                                        },
+                                        {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                                "type": "Identifier",
+                                                "name": "env"
+                                            },
+                                            "property": {
+                                                "type": "Identifier",
+                                                "name": "colorRamp3"
+                                            }
+                                        },
+                                        {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                                "type": "Identifier",
+                                                "name": "env"
+                                            },
+                                            "property": {
+                                                "type": "Identifier",
+                                                "name": "position3"
+                                            }
+                                        },
+                                        {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                                "type": "Identifier",
+                                                "name": "env"
+                                            },
+                                            "property": {
+                                                "type": "Identifier",
+                                                "name": "colorRamp4"
+                                            }
+                                        },
+                                        {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                                "type": "Identifier",
+                                                "name": "env"
+                                            },
+                                            "property": {
+                                                "type": "Identifier",
+                                                "name": "position4"
+                                            }
+                                        },
+                                        {
+                                            "type": "CallExpression",
+                                            "callee": {
+                                                "type": "MemberExpression",
+                                                "computed": false,
+                                                "object": {
+                                                    "type": "Identifier",
+                                                    "name": "ColorRampFac"
+                                                },
+                                                "property": {
+                                                    "type": "Identifier",
+                                                    "name": "length"
+                                                }
+                                            },
+                                            "arguments": []
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "kind": "var"
+                    }
 }
