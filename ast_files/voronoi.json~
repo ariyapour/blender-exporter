@@ -489,8 +489,17 @@
                     {
                         "type": "ReturnStatement",
                         "argument": {
-                            "type": "Identifier",
-                            "name": "distance"
+                            "type": "NewExpression",
+                            "callee": {
+                                "type": "Identifier",
+                                "name": "Vec3"
+                            },
+                            "arguments": [
+                                {
+                                    "type": "Identifier",
+                                    "name": "distance"
+                                }
+                            ]
                         }
                     }
                 ]
@@ -3350,7 +3359,7 @@
                                 "type": "VariableDeclarator",
                                 "id": {
                                     "type": "Identifier",
-                                    "name": "distance"
+                                    "name": "variable"
                                 },
                                 "init": {
                                     "type": "CallExpression",
@@ -3380,7 +3389,7 @@
                                             },
                                             "property": {
                                                 "type": "Identifier",
-                                                "name": "scale"
+                                                "name": "VoronoiTextureScale"
                                             }
                                         }
                                     ]

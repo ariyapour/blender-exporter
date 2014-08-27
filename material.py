@@ -67,6 +67,7 @@ def followLinks(node_in):
               print ("Space: "+node_links.from_node.space)   
    
 
+            #For voronoi texture the scale should be even and not more than 32 for now
             if node_links.from_node.name == "Voronoi Texture":  ##for voronoi texture for now we dont check the inputs and we assume we are not getting inputs!
               voronoiFile = open(mainPath+'/ast_files/voronoi.json','r')
               voronoi = json.load(voronoiFile)
@@ -81,9 +82,9 @@ def followLinks(node_in):
               colorRamp["colorRampCall"]["declarations"][0]["id"]["name"] =  node_in.name.replace(" ", "")+n_inputs.name.replace(" ", "")
               initJson["body"][0]["body"]["body"].insert(0,colorRamp["colorRampCall"])
               initJson["body"].append(colorRamp["colorRampFunction"])
-              for p in range(1,len(node_links.from_node.color_ramp.elements)):
-                  shaderParameters.write("<float name=\"position"+ str(p) +"\"> " + str(node_links.from_node.color_ramp.elements[p].position) + "</float>\n")
-                  shaderParameters.write("<float3 name=\"colorRamp"+ str(p) +"\"> " + str(node_links.from_node.color_ramp.elements[p].color[0]) + " " + str(node_links.from_node.color_ramp.elements[p].color[1]) + " " +str(node_links.from_node.color_ramp.elements[p].color[2]) + "</float3>\n")
+              for p in range(0,len(node_links.from_node.color_ramp.elements)-1):
+                  shaderParameters.write("<float name=\"position"+ str(p+1) +"\"> " + str(node_links.from_node.color_ramp.elements[p].position) + "</float>\n")
+                  shaderParameters.write("<float3 name=\"colorRamp"+ str(p+1) +"\"> " + str(node_links.from_node.color_ramp.elements[p].color[0]) + " " + str(node_links.from_node.color_ramp.elements[p].color[1]) + " " +str(node_links.from_node.color_ramp.elements[p].color[2]) + "</float3>\n")
                   
                   
 
@@ -116,9 +117,7 @@ def followLinks(node_in):
 
 
             if node_links.from_node.name == "Mix Shader":
-              if (node_links.from_node.inputs[1].links[0].from_node.name == "Refraction BSDF") and (node_links.from_node.inputs[2].links[0].from_node.name == "Glossy BSDF"):
-                if node_links.from_node.inputs[0].links[0].from_node.name == "Layer Weight":
-
+              if (node_links.from_node.inputs[1].links[0].from_node.name == "Refraction BSDF"):
                   ###add refract to shade()###########################################
                   addRefractfile = open(mainPath+'/ast_files/addRefract_test.json','r')
                   addRefract = json.load(addRefractfile)
@@ -131,7 +130,7 @@ def followLinks(node_in):
                   initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["property"] = addRefract["property"]
                   initJson["body"][0]["body"]["body"][0]["argument"]["type"] = "CallExpression"
                   ###################################################################
-
+            if  (node_links.from_node.inputs[2].links[0].from_node.name == "Glossy BSDF"):
                   ###add reflect to shade()###########################################
                   addReflectfile = open(mainPath+'/ast_files/addReflect_test.json','r')
                   addReflect = json.load(addReflectfile)
@@ -144,7 +143,7 @@ def followLinks(node_in):
                   initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["property"] = addReflect["property"]
                   initJson["body"][0]["body"]["body"][0]["argument"]["type"] = "CallExpression"
                   ###################################################################
-                  
+            if node_links.from_node.inputs[0].links[0].from_node.name == "Fresnel":      
                   ####### add fresnel################################################
                   fresnelFile = open(mainPath+'/ast_files/fresnelAst_call.json','r')
                   fresnel = json.load(fresnelFile)
@@ -152,6 +151,19 @@ def followLinks(node_in):
                   initJson["body"].append(fresnel["body"][1])
                   initJson["body"][0]["body"]["body"].insert(0,fresnel["functionCall"][0])
                   initJson["body"][0]["body"]["body"].insert(0,fresnel["functionCall"][1])
+                  
+            if node_links.from_node.inputs[1].links[0].from_node.name == "Diffuse BSDF":
+                  ###add diffuse to shade()###########################################
+                  addDiffusefile = open(mainPath+'/ast_files/addDiffuse_test.json','r')
+                  addDiffuse = json.load(addDiffusefile)
+                  objectAst = copy.deepcopy(initJson["body"][0]["body"]["body"][0]["argument"])
+                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"] = {}
+                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["object"] = objectAst
+                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["type"] = "MemberExpression"
+                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["computed"] = False
+                  initJson["body"][0]["body"]["body"][0]["argument"]["arguments"]= addDiffuse["arguments"]
+                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["property"] = addDiffuse["property"]
+                  initJson["body"][0]["body"]["body"][0]["argument"]["type"] = "CallExpression" 
  
                 
             if node_links.from_node.name == "Toon BSDF":
