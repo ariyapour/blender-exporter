@@ -1,0 +1,31 @@
+{"arguments": [
+                                {
+                                    "type": "MemberExpression",
+                                    "computed": false,
+                                    "object": {
+                                        "type": "Identifier",
+                                        "name": "env"
+                                    },
+                                    "property": {
+                                        "type": "Identifier",
+                                        "name": "diffuseColor"
+                                    }
+                                },
+                                {
+                                    "type": "MemberExpression",
+                                    "computed": false,
+                                    "object": {
+                                        "type": "Identifier",
+                                        "name": "env"
+                                    },
+                                    "property": {
+                                        "type": "Identifier",
+                                        "name": "normal"
+                                    }
+                                }
+                            ],
+"property": {
+                                    "type": "Identifier",
+                                    "name": "diffuse"
+            }
+}
