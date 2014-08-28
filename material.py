@@ -11,10 +11,15 @@ mainPath= "/home/ariyapour/git/blender-exporter"
 
     
 #Adds brdf to shade function
-def addToShade(fileName, initJson):
+def addToShade(fileName, initJson,currentNode):
     
+    if initJson["body"][0]["body"]["body"][0]["argument"]["type"] == "CallExpression":
+        fileName = fileName+ "_toShade.json"
+    else:
+        fileName = fileName+ ".json"
     addBSDFFile = open(mainPath+'/ast_files/'+ fileName,'r')
     addBSDF = json.load(addBSDFFile)
+    
     if initJson["body"][0]["body"]["body"][0]["argument"]["type"] != "CallExpression":
         initJson["body"][0]["body"]["body"][0]["argument"] = addBSDF
     else:  
@@ -25,8 +30,16 @@ def addToShade(fileName, initJson):
         initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["computed"] = False
         initJson["body"][0]["body"]["body"][0]["argument"]["arguments"]= addBSDF["arguments"]
         initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["property"] = addBSDF["property"]
-        initJson["body"][0]["body"]["body"][0]["argument"]["type"] = "CallExpression"
+        initJson["body"][0]["body"]["body"][0]["argument"]["type"] = "CallExpression"    
+        
+    for input in currentNode.inputs :    
+      if input.is_linked:
+        if input.name == "Color":
+          addBSDF["arguments"].pop(0)
+          addBSDF["arguments"]. insert(0, {"type": "Identifier","name": currentNode.name.replace(" ", "")+input.name.replace(" ", "")})
     
+
+
 
 #adds a call function and adds the function declaration to the end
 def addFunction_call(fileName,nextNode,currentNode, initJson):
@@ -35,6 +48,8 @@ def addFunction_call(fileName,nextNode,currentNode, initJson):
    func["functionCall"]["declarations"][0]["id"]["name"] =  nextNode.name.replace(" ", "")+currentNode.name.replace(" ", "")
    initJson["body"][0]["body"]["body"].insert(0,func["functionCall"])
    initJson["body"].append(func["function"])
+
+
 
 
 def writeShaderParameters(nextNode,currentNode):
@@ -69,8 +84,8 @@ def followLinks(node_in):
             
             
             
-            if node_links.from_node.name == "Diffuse BSDF":
-              addToShade('diffuseAst.json', initJson)
+#            if node_links.from_node.name == "Diffuse BSDF":
+#              addToShade('diffuseAst.json', initJson,node_links.from_node)
 
               
               
@@ -92,7 +107,7 @@ def followLinks(node_in):
    
 
             #For voronoi texture the scale should be even and not more than 32 for now
-            if node_links.from_node.name == "Voronoi Texture":  ##for voronoi texture for now we dont check the inputs and we assume we are not getting inputs!
+            if node_links.from_node.name == "Voronoi Texture":  ##for voronoi texture for now we don't check the inputs!
               addFunction_call('voronoi.json',node_in,n_inputs,initJson)
             
             if node_links.from_node.name == "ColorRamp":
@@ -106,63 +121,71 @@ def followLinks(node_in):
 
 
 
-            if (node_links.from_node.name == "Glossy BSDF" or node_links.from_node.name == "Refraction BSDF" or node_links.from_node.name == "Glass BSDF"):
-              print("distribution: "+ str(node_links.from_node.distribution))
+            if (node_links.from_node.name == "Glossy BSDF" or node_links.from_node.name == "Refraction BSDF" or node_links.from_node.name == "Glass BSDF" or node_links.from_node.name == "Diffuse BSDF"):
+ #             print("distribution: "+ str(node_links.from_node.distribution))
               if (node_links.from_node.outputs[0].links[0].to_node.name != "Mix Shader"):
                   ##reflection
                 if node_links.from_node.name == "Glossy BSDF" :
-                  glossyBSDFFile = open(mainPath+'/ast_files/glossyBSDFAst.json','r')
-                  glossyBSDF = json.load(glossyBSDFFile)
-                  initJson["body"][0]["body"]["body"][0]["argument"] = glossyBSDF
-                  ##Refraction
+                  addToShade('addReflect',initJson,node_links.from_node)
                   
+                  ##Refraction
                 if node_links.from_node.name == "Refraction BSDF" :
-                  addRefractfile = open(mainPath+'/ast_files/addRefract_test.json','r')
-                  addRefract = json.load(addRefractfile)
-                  objectAst = copy.deepcopy(initJson["body"][0]["body"]["body"][0]["argument"])
-                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"] = {}
-                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["object"] = objectAst
-                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["type"] = "MemberExpression"
-                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["computed"] = False
-                  initJson["body"][0]["body"]["body"][0]["argument"]["arguments"]= addRefract["arguments"]
-                  initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["property"] = addRefract["property"]
-                  initJson["body"][0]["body"]["body"][0]["argument"]["type"] = "CallExpression"
+                  addToShade('addRefract_toShade',initJson,node_links.from_node)  
+ 
+                if node_links.from_node.name == "Diffuse BSDF":
+                  addToShade('addDiffuse.json', initJson,node_links.from_node)
+
                   
 
 
 
             if node_links.from_node.name == "Mix Shader":
-              if (node_links.from_node.inputs[1].links[0].from_node.name == "Refraction BSDF"):
+              if (node_links.from_node.inputs[0].is_linked and node_links.from_node.inputs[1].links[0].from_node.name == "Refraction BSDF"):
                 #if node_links.from_node.inputs[0].links[0].from_node.name == "Layer Weight":
                 ###add refract to shade()###########################################
-                addToShade('addRefract_test.json', initJson)
+                addToShade('addRefract', initJson,node_links.from_node.inputs[1].links[0].from_node)
                 
-                
-              if (node_links.from_node.inputs[2].links[0].from_node.name == "Glossy BSDF"):
-                ###add reflect to shade()###########################################
-                addToShade('addReflect_test.json', initJson)
-
-              if (node_links.from_node.inputs[1].links[0].from_node.name == "Diffuse BSDF"):
+              if (node_links.from_node.inputs[0].is_linked and node_links.from_node.inputs[1].links[0].from_node.name == "Diffuse BSDF"):
                 ###add diffuse to shade()###########################################
-                addDiffusefile = open(mainPath+'/ast_files/addDiffuse_test.json','r')
-                addDiffuse = json.load(addDiffusefile)
-                for input in node_links.from_node.inputs[1].links[0].from_node.inputs :
-                    if input.is_linked:
-                      if input.name == "Color":
-                          addDiffuse["arguments"].pop(0)
-                          addDiffuse["arguments"]. insert(0, {"type": "Identifier","name": node_links.from_node.inputs[1].links[0].from_node.name.replace(" ", "")+input.name.replace(" ", "")})
+                addToShade('addDiffuse', initJson,node_links.from_node.inputs[1].links[0].from_node)
+                 
+              if (node_links.from_node.inputs[0].is_linked and node_links.from_node.inputs[1].links[0].from_node.name == "Glossy BSDF"):
+                ###add reflect to shade()###########################################
+                addToShade('addReflect', initJson,node_links.from_node.inputs[1].links[0].from_node)  
                 
-                addToShade('addDiffuse_test.json', initJson)
+                
+              if (node_links.from_node.inputs[0].is_linked and node_links.from_node.inputs[2].links[0].from_node.name == "Refraction BSDF"):
+                #if node_links.from_node.inputs[0].links[0].from_node.name == "Layer Weight":
+                ###add refract to shade()###########################################
+                addToShade('addRefract', initJson,node_links.from_node.inputs[2].links[0].from_node)
+                
+              if (node_links.from_node.inputs[0].is_linked and node_links.from_node.inputs[2].links[0].from_node.name == "Diffuse BSDF"):
+                ###add diffuse to shade()###########################################
+                addToShade('addDiffuse', initJson,node_links.from_node.inputs[2].links[0].from_node)
+                 
+              if (node_links.from_node.inputs[0].is_linked and node_links.from_node.inputs[2].links[0].from_node.name == "Glossy BSDF"):
+                ###add reflect to shade()###########################################
+                addToShade('addReflect', initJson,node_links.from_node.inputs[2].links[0].from_node)     
+                
+            if (node_links.from_node.inputs[0].is_linked and node_links.from_node.inputs[0].links[0].from_node.name == "Fresnel"):    
+                ###### add fresnel################################################
+              fresnelFile = open(mainPath+'/ast_files/fresnelAst_call.json','r')
+              fresnel = json.load(fresnelFile)
+              initJson["body"].append(fresnel["body"][0])
+              initJson["body"].append(fresnel["body"][1])
+              initJson["body"][0]["body"]["body"].insert(0,fresnel["functionCall"][0])
+              initJson["body"][0]["body"]["body"].insert(0,fresnel["functionCall"][1])                
+                
+                
+                
+#               if (node_links.from_node.inputs[2].links[0].from_node.name == "Glossy BSDF"):
+#                 ###add reflect to shade()###########################################
+#                 addToShade('addReflect', initJson,node_links.from_node.inputs[2].links[0].from_node)
+
+
                   ###################################################################
                   
-              if (node_links.from_node.inputs[0].links[0].from_node.name == "Fresnel"):    
-                  ####### add fresnel################################################
-                fresnelFile = open(mainPath+'/ast_files/fresnelAst_call.json','r')
-                fresnel = json.load(fresnelFile)
-                initJson["body"].append(fresnel["body"][0])
-                initJson["body"].append(fresnel["body"][1])
-                initJson["body"][0]["body"]["body"].insert(0,fresnel["functionCall"][0])
-                initJson["body"][0]["body"]["body"].insert(0,fresnel["functionCall"][1])
+
  
                 
             if node_links.from_node.name == "Toon BSDF":
