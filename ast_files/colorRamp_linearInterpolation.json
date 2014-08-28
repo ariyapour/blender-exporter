@@ -1,5 +1,5 @@
 {
-"colorRampFunction":{
+"function":{
     "type": "Program",
     "body": [
 	{
@@ -396,7 +396,7 @@
     ]
 }
 ,
-"colorRampCall":{
+"functionCall":{
                         "type": "VariableDeclaration",
                         "declarations": [
                             {

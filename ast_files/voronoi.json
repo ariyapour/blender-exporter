@@ -1,5 +1,5 @@
 {
-"voronoiFunction":{
+"function":{
     "type": "Program",
     "body": [
         {
@@ -3352,7 +3352,7 @@
         }
     ]
 }
-,"voronoiCall": {
+,"functionCall": {
                         "type": "VariableDeclaration",
                         "declarations": [
                             {

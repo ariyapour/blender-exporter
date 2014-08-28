@@ -9,27 +9,59 @@ import copy
 mainPath= "/home/ariyapour/git/blender-exporter"
 
 
-def followLinks(node_in):
-    for n_inputs in node_in.inputs:
-        if n_inputs.name != "Volume" and n_inputs.name != "Displacement" :
-          print (n_inputs.name)
+    
+#Adds brdf to shade function
+def addToShade(fileName, initJson):
+    
+    addBSDFFile = open(mainPath+'/ast_files/'+ fileName,'r')
+    addBSDF = json.load(addBSDFFile)
+    if initJson["body"][0]["body"]["body"][0]["argument"]["type"] != "CallExpression":
+        initJson["body"][0]["body"]["body"][0]["argument"] = addBSDF
+    else:  
+        objectAst = copy.deepcopy(initJson["body"][0]["body"]["body"][0]["argument"])
+        initJson["body"][0]["body"]["body"][0]["argument"]["callee"] = {}
+        initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["object"] = objectAst
+        initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["type"] = "MemberExpression"
+        initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["computed"] = False
+        initJson["body"][0]["body"]["body"][0]["argument"]["arguments"]= addBSDF["arguments"]
+        initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["property"] = addBSDF["property"]
+        initJson["body"][0]["body"]["body"][0]["argument"]["type"] = "CallExpression"
+    
+
+#adds a call function and adds the function declaration to the end
+def addFunction_call(fileName,nextNode,currentNode, initJson):
+   funcFile = open(mainPath+'/ast_files/' + fileName,'r')
+   func = json.load(funcFile)
+   func["functionCall"]["declarations"][0]["id"]["name"] =  nextNode.name.replace(" ", "")+currentNode.name.replace(" ", "")
+   initJson["body"][0]["body"]["body"].insert(0,func["functionCall"])
+   initJson["body"].append(func["function"])
+
+
+def writeShaderParameters(nextNode,currentNode):
+        if currentNode.name != "Volume" and currentNode.name != "Displacement" :
+          print (currentNode.name)
           ### we have to store these as shader parameters
-          if not n_inputs.links:
-            if hasattr(n_inputs.default_value, '__iter__'):
-                ## Write the shader parameters ###############################################
-              if n_inputs.type == "RGBA" and n_inputs.name == "Color":  
-                shaderParameters.write("<float3 name=\""+ node_in.name.replace(" ", "")+n_inputs.name.replace(" ", "")+"\"> ")
+          if not currentNode.links:
+            if hasattr(currentNode.default_value, '__iter__'):
+                ## Write the shader parameters ##############
+              if currentNode.type == "RGBA" and currentNode.name == "Color":  
+                shaderParameters.write("<float3 name=\""+ nextNode.name.replace(" ", "")+currentNode.name.replace(" ", "")+"\"> ")
                 ## add the values
                 for i in range(0,3) :
-                  print (n_inputs.default_value[i])
-                  shaderParameters.write(str(n_inputs.default_value[i])+ " " )
+                  print (currentNode.default_value[i])
+                  shaderParameters.write(str(currentNode.default_value[i])+ " " )
                 shaderParameters.write("</float3>\n")
             else:
-                print(n_inputs.default_value)
-                shaderParameters.write("<float name=\""+ node_in.name.replace(" ", "")+n_inputs.name.replace(" ", "")+"\"> " + str(n_inputs.default_value) + "</float>\n")
-                
-                
-                
+                print(currentNode.default_value)
+                shaderParameters.write("<float name=\""+ nextNode.name.replace(" ", "")+currentNode.name.replace(" ", "")+"\"> " + str(currentNode.default_value) + "</float>\n")
+
+
+
+def followLinks(node_in):
+    for n_inputs in node_in.inputs:
+        #Writing shader parameters
+        writeShaderParameters(node_in,n_inputs)
+    
                 
         for node_links in n_inputs.links:
                                 ##second node                          ##original node
@@ -38,22 +70,11 @@ def followLinks(node_in):
             
             
             if node_links.from_node.name == "Diffuse BSDF":
-              diffuseFile = open(mainPath+'/ast_files/diffuseAst.json','r')
-              diffuseJson = json.load(diffuseFile)
-              ## for each node we have to check if the inputs are linked then we have to change the name in order for function calls
-              for input in node_links.from_node.inputs :
-                  if input.is_linked:
-                      if input.name == "Color":
-                          diffuseJson["arguments"].pop(0)
-                          diffuseJson["arguments"]. insert(0, {"type": "Identifier","name": node_links.from_node.name.replace(" ", "")+input.name.replace(" ", "")})
-                      if input.name == "Normal":
-                          diffuseJson["arguments"].pop(1)
-                          diffuseJson["arguments"]. insert(1, {"type": "Identifier","name": node_links.from_node.name.replace(" ", "")+input.name.replace(" ", "")})
-              
-              initJson["body"][0]["body"]["body"][0]["argument"] = diffuseJson
+              addToShade('diffuseAst.json', initJson)
+
               
               
-              ##firs we have to make a call with the parameter of the original node in left and call of the second node in right then add the second node to the end of javascriptcode
+              ##first we have to make a call with the parameter of the original node in left and call of the second node in right then add the second node to the end of javascriptcode
             if node_links.from_node.name == "Math":
               print ("operation: "+node_links.from_node.operation + "\nClamp:" + str(node_links.from_node.use_clamp))
             if node_links.from_node.name == "Vector Math":
@@ -72,19 +93,10 @@ def followLinks(node_in):
 
             #For voronoi texture the scale should be even and not more than 32 for now
             if node_links.from_node.name == "Voronoi Texture":  ##for voronoi texture for now we dont check the inputs and we assume we are not getting inputs!
-              voronoiFile = open(mainPath+'/ast_files/voronoi.json','r')
-              voronoi = json.load(voronoiFile)
-              ##the bug probably here
-              voronoi["voronoiCall"]["declarations"][0]["id"]["name"] =  node_in.name.replace(" ", "")+n_inputs.name.replace(" ", "")
-              initJson["body"][0]["body"]["body"].insert(0,voronoi["voronoiCall"])
-              initJson["body"].append(voronoi["voronoiFunction"])
+              addFunction_call('voronoi.json',node_in,n_inputs,initJson)
             
             if node_links.from_node.name == "ColorRamp":
-              colorRampFile = open(mainPath+'/ast_files/colorRamp_linearInterpolation.json','r')
-              colorRamp = json.load(colorRampFile)
-              colorRamp["colorRampCall"]["declarations"][0]["id"]["name"] =  node_in.name.replace(" ", "")+n_inputs.name.replace(" ", "")
-              initJson["body"][0]["body"]["body"].insert(0,colorRamp["colorRampCall"])
-              initJson["body"].append(colorRamp["colorRampFunction"])
+              addFunction_call('colorRamp_linearInterpolation.json',node_in,n_inputs,initJson)
               for p in range(0,len(node_links.from_node.color_ramp.elements)-1):
                   shaderParameters.write("<float name=\"position"+ str(p+1) +"\"> " + str(node_links.from_node.color_ramp.elements[p].position) + "</float>\n")
                   shaderParameters.write("<float3 name=\"colorRamp"+ str(p+1) +"\"> " + str(node_links.from_node.color_ramp.elements[p].color[0]) + " " + str(node_links.from_node.color_ramp.elements[p].color[1]) + " " +str(node_links.from_node.color_ramp.elements[p].color[2]) + "</float3>\n")
@@ -122,32 +134,13 @@ def followLinks(node_in):
             if node_links.from_node.name == "Mix Shader":
               if (node_links.from_node.inputs[1].links[0].from_node.name == "Refraction BSDF"):
                 #if node_links.from_node.inputs[0].links[0].from_node.name == "Layer Weight":
-
-                  ###add refract to shade()###########################################
-                addRefractfile = open(mainPath+'/ast_files/addRefract_test.json','r')
-                addRefract = json.load(addRefractfile)
-                objectAst = copy.deepcopy(initJson["body"][0]["body"]["body"][0]["argument"])
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"] = {}
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["object"] = objectAst
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["type"] = "MemberExpression"
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["computed"] = False
-                initJson["body"][0]["body"]["body"][0]["argument"]["arguments"]= addRefract["arguments"]
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["property"] = addRefract["property"]
-                initJson["body"][0]["body"]["body"][0]["argument"]["type"] = "CallExpression"
-                  ###################################################################
+                ###add refract to shade()###########################################
+                addToShade('addRefract_test.json', initJson)
+                
+                
               if (node_links.from_node.inputs[2].links[0].from_node.name == "Glossy BSDF"):
-                  ###add reflect to shade()###########################################
-                addReflectfile = open(mainPath+'/ast_files/addReflect_test.json','r')
-                addReflect = json.load(addReflectfile)
-                objectAst = copy.deepcopy(initJson["body"][0]["body"]["body"][0]["argument"])
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"] = {}
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["object"] = objectAst
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["type"] = "MemberExpression"
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["computed"] = False
-                initJson["body"][0]["body"]["body"][0]["argument"]["arguments"]= addReflect["arguments"]
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["property"] = addReflect["property"]
-                initJson["body"][0]["body"]["body"][0]["argument"]["type"] = "CallExpression"
-                  ###################################################################
+                ###add reflect to shade()###########################################
+                addToShade('addReflect_test.json', initJson)
 
               if (node_links.from_node.inputs[1].links[0].from_node.name == "Diffuse BSDF"):
                 ###add diffuse to shade()###########################################
@@ -159,14 +152,7 @@ def followLinks(node_in):
                           addDiffuse["arguments"].pop(0)
                           addDiffuse["arguments"]. insert(0, {"type": "Identifier","name": node_links.from_node.inputs[1].links[0].from_node.name.replace(" ", "")+input.name.replace(" ", "")})
                 
-                objectAst = copy.deepcopy(initJson["body"][0]["body"]["body"][0]["argument"])
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"] = {}
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["object"] = objectAst
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["type"] = "MemberExpression"
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["computed"] = False
-                initJson["body"][0]["body"]["body"][0]["argument"]["arguments"]= addDiffuse["arguments"]
-                initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["property"] = addDiffuse["property"]
-                initJson["body"][0]["body"]["body"][0]["argument"]["type"] = "CallExpression"
+                addToShade('addDiffuse_test.json', initJson)
                   ###################################################################
                   
               if (node_links.from_node.inputs[0].links[0].from_node.name == "Fresnel"):    

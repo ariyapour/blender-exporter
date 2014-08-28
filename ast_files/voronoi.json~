@@ -1,5 +1,5 @@
 {
-"voronoiFunction":{
+"Function":{
     "type": "Program",
     "body": [
         {
@@ -1440,7 +1440,7 @@
                                                 },
                                                 "property": {
                                                     "type": "Identifier",
-                                                    "name": "scale"
+                                                    "name": "VoronoiTextureScale"
                                                 }
                                             }
                                         },
@@ -1460,7 +1460,7 @@
                                                 },
                                                 "property": {
                                                     "type": "Identifier",
-                                                    "name": "scale"
+                                                    "name": "VoronoiTextureScale"
                                                 }
                                             }
                                         }
@@ -3352,7 +3352,7 @@
         }
     ]
 }
-,"voronoiCall": {
+,"functionCall": {
                         "type": "VariableDeclaration",
                         "declarations": [
                             {
