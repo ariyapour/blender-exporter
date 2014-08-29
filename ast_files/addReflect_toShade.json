@@ -1,0 +1,35 @@
+{"arguments": [
+                                {
+                                    "type": "MemberExpression",
+                                    "computed": false,
+                                    "object": {
+                                        "type": "Identifier",
+                                        "name": "env"
+                                    },
+                                    "property": {
+                                        "type": "Identifier",
+                                        "name": "normal"
+                                    }
+                                },
+				{
+                                    "type": "MemberExpression",
+                                    "computed": false,
+                                    "object": {
+                                        "type": "Identifier",
+                                        "name": "env"
+                                    },
+                                    "property": {
+                                        "type": "Identifier",
+                                        "name": "GlossyBSDFColor"
+                                    }
+                                },
+                                {
+                                    "type": "Identifier",
+                                    "name": "fresnel"
+                                }
+                            ],
+"property": {
+                                    "type": "Identifier",
+                                    "name": "reflect"
+            }
+}

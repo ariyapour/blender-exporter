@@ -1,7 +1,5 @@
 {
-"function":{
-    "type": "Program",
-    "body": [
+"function":[
 	{
             "type": "FunctionDeclaration",
             "id": {
@@ -394,7 +392,6 @@
             "expression": false
         }
     ]
-}
 ,
 "functionCall":{
                         "type": "VariableDeclaration",
@@ -421,7 +418,7 @@
                                             },
                                             "property": {
                                                 "type": "Identifier",
-                                                "name": "colorRamp1"
+                                                "name": "color1"
                                             }
                                         },
                                         {
@@ -445,7 +442,7 @@
                                             },
                                             "property": {
                                                 "type": "Identifier",
-                                                "name": "colorRamp2"
+                                                "name": "color2"
                                             }
                                         },
                                         {
@@ -469,7 +466,7 @@
                                             },
                                             "property": {
                                                 "type": "Identifier",
-                                                "name": "colorRamp3"
+                                                "name": "color3"
                                             }
                                         },
                                         {
@@ -493,7 +490,7 @@
                                             },
                                             "property": {
                                                 "type": "Identifier",
-                                                "name": "colorRamp4"
+                                                "name": "color4"
                                             }
                                         },
                                         {
@@ -515,7 +512,7 @@
                                                 "computed": false,
                                                 "object": {
                                                     "type": "Identifier",
-                                                    "name": "ColorRampFac"
+                                                    "name": "Fac"
                                                 },
                                                 "property": {
                                                     "type": "Identifier",
