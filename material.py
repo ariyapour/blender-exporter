@@ -55,7 +55,10 @@ def addFunction_call(fileName,nextNode,currentInput, initJson):
    #change the arguments names in case we have multiple calls
    for argument in func["functionCall"]["declarations"][0]["init"]["arguments"]:
        if argument["type"]== "MemberExpression":
-          argument["property"]["name"] = currentInput.links[0].from_node.name.replace(".","").replace(" ", "") + argument["property"]["name"] 
+            if argument["property"]["name"] == "texcoord" or argument["property"]["name"] == "scale" or argument["property"]["name"] == "position" or argument["property"]["name"] == "normal" or argument["property"]["name"] == "blend":
+                continue
+            else:
+                argument["property"]["name"] = currentInput.links[0].from_node.name.replace(".","").replace(" ", "") + argument["property"]["name"]
        else: 
            if argument["type"]== "CallExpression":
                argument["callee"]["object"]["name"] = currentInput.links[0].from_node.name.replace(".","").replace(" ", "") + argument["callee"]["object"]["name"]
@@ -133,8 +136,8 @@ def followLinks(node_in):
               if nodeName.group() == "ColorRamp":
                 addFunction_call('colorRamp_linearInterpolation.json',node_in,n_inputs,initJson)
                 for p in range(0,len(node_links.from_node.color_ramp.elements)-1):
-                    shaderParameters.write("<float name=\"position"+ str(p+1) +"\"> " + str(node_links.from_node.color_ramp.elements[p].position) + "</float>\n")
-                    shaderParameters.write("<float3 name=\"colorRamp"+ str(p+1) +"\"> " + str(node_links.from_node.color_ramp.elements[p].color[0]) + " " + str(node_links.from_node.color_ramp.elements[p].color[1]) + " " +str(node_links.from_node.color_ramp.elements[p].color[2]) + "</float3>\n")
+                    shaderParameters.write("<float name=\"" +node_links.from_node.name.replace(".","")+"position"+ str(p+1) +"\"> " + str(node_links.from_node.color_ramp.elements[p].position) + "</float>\n")
+                    shaderParameters.write("<float3 name=\""+node_links.from_node.name.replace(".","")+"color"+ str(p+1) +"\"> " + str(node_links.from_node.color_ramp.elements[p].color[0]) + " " + str(node_links.from_node.color_ramp.elements[p].color[1]) + " " +str(node_links.from_node.color_ramp.elements[p].color[2]) + "</float3>\n")
                   
                   
 

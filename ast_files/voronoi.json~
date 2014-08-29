@@ -1,7 +1,5 @@
 {
-"Function":{
-    "type": "Program",
-    "body": [
+"function":[
         {
             "type": "FunctionDeclaration",
             "id": {
@@ -3351,7 +3349,6 @@
             "expression": false
         }
     ]
-}
 ,"functionCall": {
                         "type": "VariableDeclaration",
                         "declarations": [
@@ -3389,7 +3386,7 @@
                                             },
                                             "property": {
                                                 "type": "Identifier",
-                                                "name": "VoronoiTextureScale"
+                                                "name": "Scale"
                                             }
                                         }
                                     ]

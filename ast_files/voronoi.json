@@ -3386,7 +3386,7 @@
                                             },
                                             "property": {
                                                 "type": "Identifier",
-                                                "name": "VoronoiTextureScale"
+                                                "name": "scale"
                                             }
                                         }
                                     ]
