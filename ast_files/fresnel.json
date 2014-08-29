@@ -1,0 +1,642 @@
+{"function":[{
+            "type": "FunctionDeclaration",
+            "id": {
+                "type": "Identifier",
+                "name": "calculateEta"
+            },
+            "params": [
+                {
+                    "type": "Identifier",
+                    "name": "blend"
+                }
+            ],
+            "defaults": [],
+            "body": {
+                "type": "BlockStatement",
+                "body": [
+                    {
+                        "type": "ReturnStatement",
+                        "argument": {
+                            "type": "CallExpression",
+                            "callee": {
+                                "type": "MemberExpression",
+                                "computed": false,
+                                "object": {
+                                    "type": "Identifier",
+                                    "name": "Math"
+                                },
+                                "property": {
+                                    "type": "Identifier",
+                                    "name": "max"
+                                }
+                            },
+                            "arguments": [
+                                {
+                                    "type": "BinaryExpression",
+                                    "operator": "-",
+                                    "left": {
+                                        "type": "Literal",
+                                        "value": 1,
+                                        "raw": "1.0"
+                                    },
+                                    "right": {
+                                        "type": "Identifier",
+                                        "name": "blend"
+                                    }
+                                },
+                                {
+                                    "type": "Literal",
+                                    "value": 0.00001,
+                                    "raw": "1e-5"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            },
+            "rest": null,
+            "generator": false,
+            "expression": false
+        },
+        {
+            "type": "FunctionDeclaration",
+            "id": {
+                "type": "Identifier",
+                "name": "fresnelEquation"
+            },
+            "params": [
+                {
+                    "type": "Identifier",
+                    "name": "blend"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "normal"
+                },
+                {
+                    "type": "Identifier",
+                    "name": "position"
+                }
+            ],
+            "defaults": [],
+            "body": {
+                "type": "BlockStatement",
+                "body": [
+                    {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "N"
+                                },
+                                "init": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                        "type": "MemberExpression",
+                                        "computed": false,
+                                        "object": {
+                                            "type": "Identifier",
+                                            "name": "normal"
+                                        },
+                                        "property": {
+                                            "type": "Identifier",
+                                            "name": "normalize"
+                                        }
+                                    },
+                                    "arguments": []
+                                }
+                            }
+                        ],
+                        "kind": "var"
+                    },
+                    {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "I"
+                                },
+                                "init": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                        "type": "MemberExpression",
+                                        "computed": false,
+                                        "object": {
+                                            "type": "CallExpression",
+                                            "callee": {
+                                                "type": "MemberExpression",
+                                                "computed": false,
+                                                "object": {
+                                                    "type": "Identifier",
+                                                    "name": "Space"
+                                                },
+                                                "property": {
+                                                    "type": "Identifier",
+                                                    "name": "transformDirection"
+                                                }
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "type": "MemberExpression",
+                                                    "computed": false,
+                                                    "object": {
+                                                        "type": "Identifier",
+                                                        "name": "Space"
+                                                    },
+                                                    "property": {
+                                                        "type": "Identifier",
+                                                        "name": "WORLD"
+                                                    }
+                                                },
+                                                {
+                                                    "type": "Identifier",
+                                                    "name": "position"
+                                                }
+                                            ]
+                                        },
+                                        "property": {
+                                            "type": "Identifier",
+                                            "name": "sub"
+                                        }
+                                    },
+                                    "arguments": [
+                                        {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                                "type": "ThisExpression"
+                                            },
+                                            "property": {
+                                                "type": "Identifier",
+                                                "name": "cameraPosition"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "kind": "var"
+                    },
+                    {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "cosi"
+                                },
+                                "init": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                        "type": "MemberExpression",
+                                        "computed": false,
+                                        "object": {
+                                            "type": "Identifier",
+                                            "name": "I"
+                                        },
+                                        "property": {
+                                            "type": "Identifier",
+                                            "name": "dot"
+                                        }
+                                    },
+                                    "arguments": [
+                                        {
+                                            "type": "Identifier",
+                                            "name": "N"
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "kind": "var"
+                    },
+                    {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "eta"
+                                },
+                                "init": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                        "type": "MemberExpression",
+                                        "computed": false,
+                                        "object": {
+                                            "type": "Identifier",
+                                            "name": "Math"
+                                        },
+                                        "property": {
+                                            "type": "Identifier",
+                                            "name": "max"
+                                        }
+                                    },
+                                    "arguments": [
+                                        {
+                                            "type": "BinaryExpression",
+                                            "operator": "-",
+                                            "left": {
+                                                "type": "Literal",
+                                                "value": 1,
+                                                "raw": "1.0"
+                                            },
+                                            "right": {
+                                                "type": "Identifier",
+                                                "name": "blend"
+                                            }
+                                        },
+                                        {
+                                            "type": "Literal",
+                                            "value": 0.00001,
+                                            "raw": "1e-5"
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "kind": "var"
+                    },
+                    {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "c"
+                                },
+                                "init": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                        "type": "MemberExpression",
+                                        "computed": false,
+                                        "object": {
+                                            "type": "Identifier",
+                                            "name": "Math"
+                                        },
+                                        "property": {
+                                            "type": "Identifier",
+                                            "name": "abs"
+                                        }
+                                    },
+                                    "arguments": [
+                                        {
+                                            "type": "Identifier",
+                                            "name": "cosi"
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "kind": "var"
+                    },
+                    {
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "g"
+                                },
+                                "init": {
+                                    "type": "BinaryExpression",
+                                    "operator": "+",
+                                    "left": {
+                                        "type": "BinaryExpression",
+                                        "operator": "-",
+                                        "left": {
+                                            "type": "BinaryExpression",
+                                            "operator": "*",
+                                            "left": {
+                                                "type": "Identifier",
+                                                "name": "eta"
+                                            },
+                                            "right": {
+                                                "type": "Identifier",
+                                                "name": "eta"
+                                            }
+                                        },
+                                        "right": {
+                                            "type": "Literal",
+                                            "value": 1,
+                                            "raw": "1"
+                                        }
+                                    },
+                                    "right": {
+                                        "type": "BinaryExpression",
+                                        "operator": "*",
+                                        "left": {
+                                            "type": "Identifier",
+                                            "name": "c"
+                                        },
+                                        "right": {
+                                            "type": "Identifier",
+                                            "name": "c"
+                                        }
+                                    }
+                                }
+                            }
+                        ],
+                        "kind": "var"
+                    },
+                    {
+                        "type": "IfStatement",
+                        "test": {
+                            "type": "BinaryExpression",
+                            "operator": ">",
+                            "left": {
+                                "type": "Identifier",
+                                "name": "g"
+                            },
+                            "right": {
+                                "type": "Literal",
+                                "value": 0,
+                                "raw": "0"
+                            }
+                        },
+                        "consequent": {
+                            "type": "BlockStatement",
+                            "body": [
+                                {
+                                    "type": "ExpressionStatement",
+                                    "expression": {
+                                        "type": "AssignmentExpression",
+                                        "operator": "=",
+                                        "left": {
+                                            "type": "Identifier",
+                                            "name": "g"
+                                        },
+                                        "right": {
+                                            "type": "CallExpression",
+                                            "callee": {
+                                                "type": "MemberExpression",
+                                                "computed": false,
+                                                "object": {
+                                                    "type": "Identifier",
+                                                    "name": "Math"
+                                                },
+                                                "property": {
+                                                    "type": "Identifier",
+                                                    "name": "sqrt"
+                                                }
+                                            },
+                                            "arguments": [
+                                                {
+                                                    "type": "Identifier",
+                                                    "name": "g"
+                                                }
+                                            ]
+                                        }
+                                    }
+                                },
+                                {
+                                    "type": "VariableDeclaration",
+                                    "declarations": [
+                                        {
+                                            "type": "VariableDeclarator",
+                                            "id": {
+                                                "type": "Identifier",
+                                                "name": "A"
+                                            },
+                                            "init": {
+                                                "type": "BinaryExpression",
+                                                "operator": "/",
+                                                "left": {
+                                                    "type": "BinaryExpression",
+                                                    "operator": "-",
+                                                    "left": {
+                                                        "type": "Identifier",
+                                                        "name": "g"
+                                                    },
+                                                    "right": {
+                                                        "type": "Identifier",
+                                                        "name": "c"
+                                                    }
+                                                },
+                                                "right": {
+                                                    "type": "BinaryExpression",
+                                                    "operator": "+",
+                                                    "left": {
+                                                        "type": "Identifier",
+                                                        "name": "g"
+                                                    },
+                                                    "right": {
+                                                        "type": "Identifier",
+                                                        "name": "c"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "kind": "var"
+                                },
+                                {
+                                    "type": "VariableDeclaration",
+                                    "declarations": [
+                                        {
+                                            "type": "VariableDeclarator",
+                                            "id": {
+                                                "type": "Identifier",
+                                                "name": "B"
+                                            },
+                                            "init": {
+                                                "type": "BinaryExpression",
+                                                "operator": "/",
+                                                "left": {
+                                                    "type": "BinaryExpression",
+                                                    "operator": "-",
+                                                    "left": {
+                                                        "type": "BinaryExpression",
+                                                        "operator": "*",
+                                                        "left": {
+                                                            "type": "Identifier",
+                                                            "name": "c"
+                                                        },
+                                                        "right": {
+                                                            "type": "BinaryExpression",
+                                                            "operator": "+",
+                                                            "left": {
+                                                                "type": "Identifier",
+                                                                "name": "g"
+                                                            },
+                                                            "right": {
+                                                                "type": "Identifier",
+                                                                "name": "c"
+                                                            }
+                                                        }
+                                                    },
+                                                    "right": {
+                                                        "type": "Literal",
+                                                        "value": 1,
+                                                        "raw": "1"
+                                                    }
+                                                },
+                                                "right": {
+                                                    "type": "BinaryExpression",
+                                                    "operator": "+",
+                                                    "left": {
+                                                        "type": "BinaryExpression",
+                                                        "operator": "*",
+                                                        "left": {
+                                                            "type": "Identifier",
+                                                            "name": "c"
+                                                        },
+                                                        "right": {
+                                                            "type": "BinaryExpression",
+                                                            "operator": "-",
+                                                            "left": {
+                                                                "type": "Identifier",
+                                                                "name": "g"
+                                                            },
+                                                            "right": {
+                                                                "type": "Identifier",
+                                                                "name": "c"
+                                                            }
+                                                        }
+                                                    },
+                                                    "right": {
+                                                        "type": "Literal",
+                                                        "value": 1,
+                                                        "raw": "1"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    ],
+                                    "kind": "var"
+                                },
+                                {
+                                    "type": "ReturnStatement",
+                                    "argument": {
+                                        "type": "BinaryExpression",
+                                        "operator": "*",
+                                        "left": {
+                                            "type": "BinaryExpression",
+                                            "operator": "*",
+                                            "left": {
+                                                "type": "BinaryExpression",
+                                                "operator": "*",
+                                                "left": {
+                                                    "type": "Literal",
+                                                    "value": 0.5,
+                                                    "raw": "0.5"
+                                                },
+                                                "right": {
+                                                    "type": "Identifier",
+                                                    "name": "A"
+                                                }
+                                            },
+                                            "right": {
+                                                "type": "Identifier",
+                                                "name": "A"
+                                            }
+                                        },
+                                        "right": {
+                                            "type": "BinaryExpression",
+                                            "operator": "+",
+                                            "left": {
+                                                "type": "Literal",
+                                                "value": 1,
+                                                "raw": "1"
+                                            },
+                                            "right": {
+                                                "type": "BinaryExpression",
+                                                "operator": "*",
+                                                "left": {
+                                                    "type": "Identifier",
+                                                    "name": "B"
+                                                },
+                                                "right": {
+                                                    "type": "Identifier",
+                                                    "name": "B"
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        },
+                        "alternate": {
+                            "type": "ReturnStatement",
+                            "argument": {
+                                "type": "Literal",
+                                "value": 1,
+                                "raw": "1.0"
+                            }
+                        }
+                    }
+                ]
+            },
+            "rest": null,
+            "generator": false,
+            "expression": false
+        }
+],
+"functionCall":{
+                        "type": "VariableDeclaration",
+                        "declarations": [
+                            {
+                                "type": "VariableDeclarator",
+                                "id": {
+                                    "type": "Identifier",
+                                    "name": "fresnel"
+                                },
+                                "init": {
+                                    "type": "CallExpression",
+                                    "callee": {
+                                        "type": "Identifier",
+                                        "name": "fresnelEquation"
+                                    },
+                                    "arguments": [
+                                        {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                                "type": "Identifier",
+                                                "name": "env"
+                                            },
+                                            "property": {
+                                                "type": "Identifier",
+                                                "name": "blend"
+                                            }
+                                        },
+                                        {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                                "type": "Identifier",
+                                                "name": "env"
+                                            },
+                                            "property": {
+                                                "type": "Identifier",
+                                                "name": "normal"
+                                            }
+                                        },
+                                        {
+                                            "type": "MemberExpression",
+                                            "computed": false,
+                                            "object": {
+                                                "type": "Identifier",
+                                                "name": "env"
+                                            },
+                                            "property": {
+                                                "type": "Identifier",
+                                                "name": "position"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        ],
+                        "kind": "var"
+                    }
+}
+
