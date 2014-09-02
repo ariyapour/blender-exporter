@@ -21,6 +21,12 @@ def addToShade(fileName, initJson,currentNode):
     addBSDF = json.load(addBSDFFile)
 
 
+    nodeName = re.search(r"Refraction BSDF*|Glossy BSDF*",currentNode.name)
+    if nodeName:
+       nodeName = re.search(r"Mix Shader*|",currentNode.outputs['BSDF'].links[0].to_node.name)
+       if nodeName:
+           addFunction_call('fresnel.json',currentNode,currentNode.outputs['BSDF'].links[0].to_node.inputs[0],initJson) 
+
     for input in currentNode.inputs :    
       if input.is_linked:
         if input.name == "Color":
@@ -30,21 +36,30 @@ def addToShade(fileName, initJson,currentNode):
                     addBSDF["arguments"]. insert(i, {"type": "Identifier","name": currentNode.name.replace(".","").replace(" ", "")+input.name.replace(" ", "")})
       else:
         for i in range(0,len(addBSDF["arguments"])):
-            if addBSDF["arguments"][i]["type"]=="MemberExpression" and addBSDF["arguments"][i]["property"]["name"]=="color":
-                print("111111111111HIIIIIIIIII" + currentNode.name)
-                addBSDF["arguments"][i]["property"]["name"]= currentNode.name.replace(".","").replace(" ", "")+"Color"    
+            if addBSDF["arguments"][i]["type"]=="MemberExpression":
+              if addBSDF["arguments"][i]["property"]["name"]=="color":
+                addBSDF["arguments"][i]["property"]["name"]= currentNode.name.replace(".","").replace(" ", "")+"Color"
+            if addBSDF["arguments"][i]["type"]=="Identifier":
+              if addBSDF["arguments"][i]["name"] == "fresnel":
+                addBSDF["arguments"][i]["name"]= currentNode.name.replace(".","").replace(" ", "")+"Fac"    
     
-    if initJson["body"][0]["body"]["body"][0]["argument"]["type"] != "CallExpression":
-        initJson["body"][0]["body"]["body"][0]["argument"] = addBSDF
+    #Here we search for the return statement
+    for i in range(0,len(initJson["body"][0]["body"]["body"])):
+        if initJson["body"][0]["body"]["body"][i]["type"] == "ReturnStatement" :
+            break; 
+    #########
+    if initJson["body"][0]["body"]["body"][i]["argument"]["type"] != "CallExpression":
+        print(currentNode.name+"HIIIIIIIIIIIIIIIIIIIIII")
+        initJson["body"][0]["body"]["body"][i]["argument"] = addBSDF
     else:  
-        objectAst = copy.deepcopy(initJson["body"][0]["body"]["body"][0]["argument"])
-        initJson["body"][0]["body"]["body"][0]["argument"]["callee"] = {}
-        initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["object"] = objectAst
-        initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["type"] = "MemberExpression"
-        initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["computed"] = False
-        initJson["body"][0]["body"]["body"][0]["argument"]["arguments"]= addBSDF["arguments"]
-        initJson["body"][0]["body"]["body"][0]["argument"]["callee"]["property"] = addBSDF["property"]
-        initJson["body"][0]["body"]["body"][0]["argument"]["type"] = "CallExpression"    
+        objectAst = copy.deepcopy(initJson["body"][0]["body"]["body"][i]["argument"])
+        initJson["body"][0]["body"]["body"][i]["argument"]["callee"] = {}
+        initJson["body"][0]["body"]["body"][i]["argument"]["callee"]["object"] = objectAst
+        initJson["body"][0]["body"]["body"][i]["argument"]["callee"]["type"] = "MemberExpression"
+        initJson["body"][0]["body"]["body"][i]["argument"]["callee"]["computed"] = False
+        initJson["body"][0]["body"]["body"][i]["argument"]["arguments"]= addBSDF["arguments"]
+        initJson["body"][0]["body"]["body"][i]["argument"]["callee"]["property"] = addBSDF["property"]
+        initJson["body"][0]["body"]["body"][i]["argument"]["type"] = "CallExpression"    
 
         
 
@@ -172,7 +187,7 @@ def followLinks(node_in):
             if nodeName:
               if nodeName.group() == "ColorRamp":
                 addFunction_call('colorRamp_linearInterpolation.json',node_in,n_inputs,initJson)
-                for p in range(0,len(node_links.from_node.color_ramp.elements)-1):
+                for p in range(0,len(node_links.from_node.color_ramp.elements)):
                     shaderParameters.write("<float name=\"" +node_links.from_node.name.replace(".","")+"position"+ str(p+1) +"\"> " + str(node_links.from_node.color_ramp.elements[p].position) + "</float>\n")
                     shaderParameters.write("<float3 name=\""+node_links.from_node.name.replace(".","")+"color"+ str(p+1) +"\"> " + str(node_links.from_node.color_ramp.elements[p].color[0]) + " " + str(node_links.from_node.color_ramp.elements[p].color[1]) + " " +str(node_links.from_node.color_ramp.elements[p].color[2]) + "</float3>\n")
                   

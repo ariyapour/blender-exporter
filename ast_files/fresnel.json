@@ -2,66 +2,6 @@
             "type": "FunctionDeclaration",
             "id": {
                 "type": "Identifier",
-                "name": "calculateEta"
-            },
-            "params": [
-                {
-                    "type": "Identifier",
-                    "name": "blend"
-                }
-            ],
-            "defaults": [],
-            "body": {
-                "type": "BlockStatement",
-                "body": [
-                    {
-                        "type": "ReturnStatement",
-                        "argument": {
-                            "type": "CallExpression",
-                            "callee": {
-                                "type": "MemberExpression",
-                                "computed": false,
-                                "object": {
-                                    "type": "Identifier",
-                                    "name": "Math"
-                                },
-                                "property": {
-                                    "type": "Identifier",
-                                    "name": "max"
-                                }
-                            },
-                            "arguments": [
-                                {
-                                    "type": "BinaryExpression",
-                                    "operator": "-",
-                                    "left": {
-                                        "type": "Literal",
-                                        "value": 1,
-                                        "raw": "1.0"
-                                    },
-                                    "right": {
-                                        "type": "Identifier",
-                                        "name": "blend"
-                                    }
-                                },
-                                {
-                                    "type": "Literal",
-                                    "value": 0.00001,
-                                    "raw": "1e-5"
-                                }
-                            ]
-                        }
-                    }
-                ]
-            },
-            "rest": null,
-            "generator": false,
-            "expression": false
-        },
-        {
-            "type": "FunctionDeclaration",
-            "id": {
-                "type": "Identifier",
                 "name": "fresnelEquation"
             },
             "params": [
