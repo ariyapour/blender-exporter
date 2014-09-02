@@ -1,4 +1,4 @@
- {
+{
                             "type": "CallExpression",
                             "callee": {
                                 "type": "MemberExpression",

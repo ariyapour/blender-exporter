@@ -8,7 +8,7 @@
                                     },
                                     "property": {
                                         "type": "Identifier",
-                                        "name": "diffuseColor"
+                                        "name": "color"
                                     }
                                 },
                                 {

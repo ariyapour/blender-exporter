@@ -38,7 +38,7 @@
                                     },
                                     "property": {
                                         "type": "Identifier",
-                                        "name": "GlossyBSDFColor"
+                                        "name": "color"
                                     }
                                 },
                                 {
