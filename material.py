@@ -54,8 +54,15 @@ def addToShade(fileName, initJson,currentNode):
               if addBSDF["arguments"][i]["name"] == "fresnel":
                 addBSDF["arguments"][i]["name"]= currentNode.name.replace(".","").replace(" ", "")+"Fac"   
             if addBSDF["arguments"][i]["type"]=="BinaryExpression":
-              if addBSDF["arguments"][i]["right"]["name"] == "fresnel":
-                addBSDF["arguments"][i]["right"]["name"]= currentNode.name.replace(".","").replace(" ", "")+"Fac"  
+                if addBSDF["arguments"][i]["right"]["type"]=="Identifier":
+                  if addBSDF["arguments"][i]["right"]["name"] == "fresnel":
+                    addBSDF["arguments"][i]["right"]["name"]= currentNode.name.replace(".","").replace(" ", "")+"Fac"
+                else: 
+                    if addBSDF["arguments"][i]["right"]["type"]=="MemberExpression" and addBSDF["arguments"][i]["right"]["property"]["name"] == "eta":
+                        addBSDF["arguments"][i]["right"]["property"]["name"] = currentNode.name.replace(".","").replace(" ", "")+ "IOR"
+                      
+                            
+                    
     
     #Here we search for the return statement
     for i in range(0,len(initJson["body"][0]["body"]["body"])):
