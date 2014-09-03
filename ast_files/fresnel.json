@@ -7,7 +7,7 @@
             "params": [
                 {
                     "type": "Identifier",
-                    "name": "blend"
+                    "name": "IOR"
                 },
                 {
                     "type": "Identifier",
@@ -165,39 +165,17 @@
                                     "name": "eta"
                                 },
                                 "init": {
-                                    "type": "CallExpression",
-                                    "callee": {
-                                        "type": "MemberExpression",
-                                        "computed": false,
-                                        "object": {
-                                            "type": "Identifier",
-                                            "name": "Math"
-                                        },
-                                        "property": {
-                                            "type": "Identifier",
-                                            "name": "max"
-                                        }
+                                    "type": "BinaryExpression",
+                                    "operator": "/",
+                                    "left": {
+                                        "type": "Literal",
+                                        "value": 1,
+                                        "raw": "1"
                                     },
-                                    "arguments": [
-                                        {
-                                            "type": "BinaryExpression",
-                                            "operator": "-",
-                                            "left": {
-                                                "type": "Literal",
-                                                "value": 1,
-                                                "raw": "1.0"
-                                            },
-                                            "right": {
-                                                "type": "Identifier",
-                                                "name": "blend"
-                                            }
-                                        },
-                                        {
-                                            "type": "Literal",
-                                            "value": 0.00001,
-                                            "raw": "1e-5"
-                                        }
-                                    ]
+                                    "right": {
+                                        "type": "Identifier",
+                                        "name": "IOR"
+                                    }
                                 }
                             }
                         ],
@@ -545,7 +523,7 @@
                                             },
                                             "property": {
                                                 "type": "Identifier",
-                                                "name": "blend"
+                                                "name": "IOR"
                                             }
                                         },
                                         {

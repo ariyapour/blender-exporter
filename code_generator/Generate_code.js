@@ -1,4 +1,4 @@
-//var generate = require('./Generate_code.js')
+//var x = require('./Generate_code.js')
 //generate.generate()
 
 exports.generate = function ()
