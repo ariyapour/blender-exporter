@@ -68,7 +68,10 @@ def addToShade(fileName, initJson,currentNode):
     for i in range(0,len(initJson["body"][0]["body"]["body"])):
         if initJson["body"][0]["body"]["body"][i]["type"] == "ReturnStatement" :
             break; 
-    #########
+    
+    
+    
+    
     if initJson["body"][0]["body"]["body"][i]["argument"]["type"] != "CallExpression":
         initJson["body"][0]["body"]["body"][i]["argument"] = addBSDF
     else:  
@@ -95,8 +98,10 @@ def ifFunctionExists(name):
 def addFunction_call(fileName,nextNode,currentInput, initJson):
    funcFile = open(mainPath+'/ast_files/' + fileName,'r')
    func = json.load(funcFile)
-   
-   func["functionCall"]["declarations"][0]["id"]["name"] =  nextNode.name.replace(".","").replace(" ", "")+currentInput.name.replace(" ", "")
+   if func["functionCall"]["declarations"][0]["init"]["callee"]["name"] == "fresnelEquation":
+       func["functionCall"]["declarations"][0]["id"]["name"] =  nextNode.name.replace(".","").replace(" ", "")+ "Fac"
+   else :
+    func["functionCall"]["declarations"][0]["id"]["name"] =  nextNode.name.replace(".","").replace(" ", "")+currentInput.name.replace(" ", "")
    initJson["body"][0]["body"]["body"].insert(0,func["functionCall"])
    
    #change the arguments names in case we have multiple calls

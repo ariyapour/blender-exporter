@@ -49,17 +49,6 @@
                                             "name": "eta"
                                         }
                                     }
-                                },{
-                                    "type": "MemberExpression",
-                                    "computed": false,
-                                    "object": {
-                                        "type": "Identifier",
-                                        "name": "env"
-                                    },
-                                    "property": {
-                                        "type": "Identifier",
-                                        "name": "color"
-                                    }
                                 },
                                 {
                                     "type": "BinaryExpression",
