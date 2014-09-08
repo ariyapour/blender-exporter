@@ -165,15 +165,7 @@ class ObjectShadeJSCode(bpy.types.Operator):
             
                         
                 for node_links in n_inputs.links:
-                                        ##second node                          ##original node
-                    print("going to " + node_links.from_node.name + " from " + n_inputs.name)
                     
-                    
-                    
-        #            if node_links.from_node.name == "Diffuse BSDF":
-        #              addToShade('diffuseAst.json', initJson,node_links.from_node)
-
-                      
                       
                       ##first we have to make a call with the parameter of the original node in left and call of the second node in right then add the second node to the end of javascriptcode
                     if node_links.from_node.name == "Math":
@@ -209,11 +201,19 @@ class ObjectShadeJSCode(bpy.types.Operator):
                               addToShade('addRefract',initJson,node_links.from_node)
                     
                     
-                    nodeName = re.search(r"Glossy BSDF*",node_links.from_node.name)
+                    nodeName = re.search(r"Glass BSDF*",node_links.from_node.name)
                     if nodeName:
-                      if nodeName.group() == "Glossy BSDF": 
+                      if nodeName.group() == "Glass BSDF": 
                           if node_links.from_node.outputs['BSDF'].links[0].to_node.name!= "Mix Shader":
+                              addToShade('addRefract',initJson,node_links.from_node)
                               addToShade('addReflect',initJson,node_links.from_node)
+                    
+                    
+#                     nodeName = re.search(r"Glossy BSDF*",node_links.from_node.name)
+#                     if nodeName:
+#                       if nodeName.group() == "Glossy BSDF": 
+#                           if node_links.from_node.outputs['BSDF'].links[0].to_node.name!= "Mix Shader":
+#                               addToShade('addReflect',initJson,node_links.from_node)
                               
                               
                               
@@ -266,29 +266,15 @@ class ObjectShadeJSCode(bpy.types.Operator):
                                 ###add diffuse to shade()###########################################
                                 addToShade('addDiffuse', initJson,node_links.from_node.inputs[2].links[0].from_node)
                                  
-                              if nodeName.group() == "Glossy BSDF":
-                                ###add reflect to shade()###########################################
-                                addToShade('addReflect', initJson,node_links.from_node.inputs[2].links[0].from_node)
+#                               if nodeName.group() == "Glossy BSDF":
+#                                 ###add reflect to shade()###########################################
+#                                 addToShade('addReflect', initJson,node_links.from_node.inputs[2].links[0].from_node)
                               
                               if nodeName.group() == "Glass BSDF":
                                 ###add reflect to shade()###########################################
                                 addToShade('addReflect', initJson,node_links.from_node.inputs[2].links[0].from_node)
-                                #here for add refract we send another node as currentNode to addToshade() to avoid adding duplicate fresnel calls
                                 addToShade('addRefract', initJson,node_links.from_node.inputs[2].links[0].from_node)
                         
-                         
-            
-                        
-                        
-                        
-        #               if (node_links.from_node.inputs[2].links[0].from_node.name == "Glossy BSDF"):
-        #                 ###add reflect to shade()###########################################
-        #                 addToShade('addReflect', initJson,node_links.from_node.inputs[2].links[0].from_node)
-
-
-                          ###################################################################
-                          
-
          
                         
                     if node_links.from_node.name == "Toon BSDF":
