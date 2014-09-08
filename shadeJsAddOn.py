@@ -322,19 +322,20 @@ class ObjectShadeJSCode(bpy.types.Operator):
 
         return {'FINISHED'}
 
-menu_func = (lambda self, context: self.layout.operator(ObjectCursorArray.bl_idname))
-bpy.types.VIEW3D_PT_tools_objectmode.prepend(menu_func)
+def menu_func(self, context):
+    self.layout.operator(ObjectShadeJSCode.bl_idname)
 
 
 
 def register():
     bpy.utils.register_class(ObjectShadeJSCode)
+    bpy.types.VIEW3D_MT_object.append(menu_func)
 
 
 
 def unregister():
     bpy.utils.unregister_class(ObjectShadeJSCode)
-
+    bpy.types.VIEW3D_MT_object.remove(menu_func)
 
 if __name__ == "__main__":
     register()
