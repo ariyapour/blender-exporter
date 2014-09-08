@@ -135,7 +135,7 @@ class ObjectShadeJSCode(bpy.types.Operator):
            for dic in func["function"]:
              if not ifFunctionExists(dic["id"]["name"]): 
                initJson["body"].append(dic)
-
+ 
 
 
         def writeShaderParameters(nextNode,currentNode):
