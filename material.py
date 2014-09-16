@@ -31,7 +31,7 @@ def addToShade(fileName, initJson,currentNode):
     nodeName = re.search(r"Refraction BSDF*|Glass BSDF*",currentNode.name)
     #for reflection alone we do not add the fresnel call
     if nodeName and (fileName == "addRefract.json" or fileName == "addRefract_toShade.json"):
-       nodeName = re.search(r"Mix Shader*|",currentNode.outputs['BSDF'].links[0].to_node.name)
+       nodeName = re.search(r"Mix Shader*",currentNode.outputs['BSDF'].links[0].to_node.name)
        if nodeName:
            addFunction_call('fresnel.json',currentNode,currentNode.outputs['BSDF'].links[0].to_node.inputs[0],initJson) 
 
@@ -42,17 +42,20 @@ def addToShade(fileName, initJson,currentNode):
       if input.is_linked:
         if input.name == "Color":
             for i in range(0,len(addBSDF["arguments"])):
-                if addBSDF["arguments"][i]["type"]=="MemberExpression" and addBSDF["arguments"][i]["property"]["name"]=="color":
+                if addBSDF["arguments"][i]["type"]=="MemberExpression" and addBSDF["arguments"][i]["property"]["name"]=="Color":
                     addBSDF["arguments"].pop(i)
                     addBSDF["arguments"]. insert(i, {"type": "Identifier","name": currentNode.name.replace(".","").replace(" ", "")+input.name.replace(" ", "")})
       else:
         for i in range(0,len(addBSDF["arguments"])):
-            if addBSDF["arguments"][i]["type"]=="MemberExpression":
-              if addBSDF["arguments"][i]["property"]["name"]=="color":
-                addBSDF["arguments"][i]["property"]["name"]= currentNode.name.replace(".","").replace(" ", "")+"Color"
+            if addBSDF["arguments"][i]["type"]=="MemberExpression" and addBSDF["arguments"][i]["property"]["name"] == input.name:
+              addBSDF["arguments"][i]["property"]["name"]= currentNode.name.replace(".","").replace(" ", "")+ addBSDF["arguments"][i]["property"]["name"]   
+
             if addBSDF["arguments"][i]["type"]=="Identifier":
               if addBSDF["arguments"][i]["name"] == "fresnel":
                 addBSDF["arguments"][i]["name"]= currentNode.name.replace(".","").replace(" ", "")+"Fac"   
+
+            
+            
             if addBSDF["arguments"][i]["type"]=="BinaryExpression":
                 if addBSDF["arguments"][i]["right"]["type"]=="Identifier":
                   if addBSDF["arguments"][i]["right"]["name"] == "fresnel":
@@ -193,6 +196,18 @@ def followLinks(node_in):
                       addToShade('addDiffuse',initJson,node_links.from_node)
                       
                       
+            nodeName = re.search(r"Glass BSDF*",node_links.from_node.name)
+            if nodeName:
+              if nodeName.group() == "Glass BSDF": 
+                  if node_links.from_node.distribution == "SHARP":
+                      if node_links.from_node.outputs['BSDF'].links[0].to_node.name!= "Mix Shader":
+                          addToShade('addReflect',initJson,node_links.from_node)
+                          addToShade('addRefract',initJson,node_links.from_node)
+                  if node_links.from_node.distribution == "BECKMANN":
+                    if node_links.from_node.outputs['BSDF'].links[0].to_node.name!= "Mix Shader":
+                        addToShade('addcookTorrance',initJson,node_links.from_node)
+                      
+                      
             nodeName = re.search(r"Refraction BSDF*",node_links.from_node.name)
             if nodeName:
               if nodeName.group() == "Refraction BSDF": 
@@ -232,7 +247,7 @@ def followLinks(node_in):
                     nodeName = re.search(r"Refraction BSDF*|Diffuse BSDF*|Glossy BSDF*|Glass BSDF*",node_links.from_node.inputs[1].links[0].from_node.name)
                     if nodeName:
                       if nodeName.group() == "Refraction BSDF":
-                    ###add refract to shade()###########################################
+                        ###add refract to shade()###########################################
                         addToShade('addRefract', initJson,node_links.from_node.inputs[1].links[0].from_node)
                         
                       if nodeName.group() == "Diffuse BSDF":
@@ -240,10 +255,13 @@ def followLinks(node_in):
                         addToShade('addDiffuse', initJson,node_links.from_node.inputs[1].links[0].from_node)
                          
                       if nodeName.group() == "Glass BSDF":
-                        ###add reflect to shade()###########################################
-                        addToShade('addReflect', initJson,node_links.from_node.inputs[1].links[0].from_node)  
-                        #here for add refract we send another node as currentNode to addToshade() to avoid adding duplicate fresnel calls
-                        addToShade('addRefract', initJson,node_links.from_node.inputs[1].links[0].from_node)
+                        ###add reflect to shade()##########################################
+                        if node_links.from_node.inputs[1].links[0].from_node.distribution == "SHARP":
+                            addToShade('addReflect', initJson,node_links.from_node.inputs[1].links[0].from_node)  
+                            #here for add refract we send another node as currentNode to addToshade() to avoid adding duplicate fresnel calls
+                            addToShade('addRefract', initJson,node_links.from_node.inputs[1].links[0].from_node)
+                        if node_links.from_node.inputs[1].links[0].from_node.distribution == "BECKMANN":
+                            addToShade('addcookTorrance', initJson,node_links.from_node.inputs[1].links[0].from_node)
                         
                       
                   if (node_links.from_node.inputs[2].is_linked):
@@ -263,13 +281,17 @@ def followLinks(node_in):
                       
                       if nodeName.group() == "Glass BSDF":
                         ###add reflect to shade()###########################################
-                        addToShade('addReflect', initJson,node_links.from_node.inputs[2].links[0].from_node)
-                        #here for add refract we send another node as currentNode to addToshade() to avoid adding duplicate fresnel calls
-                        addToShade('addRefract', initJson,node_links.from_node.inputs[2].links[0].from_node)
+                        if node_links.from_node.inputs[2].links[0].from_node.distribution == "SHARP":
+                            addToShade('addReflect', initJson,node_links.from_node.inputs[2].links[0].from_node)
+                            #here for add refract we send another node as currentNode to addToshade() to avoid adding duplicate fresnel calls
+                            addToShade('addRefract', initJson,node_links.from_node.inputs[2].links[0].from_node)
+                        if node_links.from_node.inputs[2].links[0].from_node.distribution == "BECKMANN":
+                            addToShade('addcookTorrance', initJson,node_links.from_node.inputs[2].links[0].from_node)
                 
                  
-    
-                
+                if (node_links.from_node.inputs[0].is_linked):
+                  nodeName = re.search(r"Fresnel*",node_links.from_node.inputs[0].links[0].from_node.name)
+                  addFunction_call('fresnel.json',node_links.from_node.inputs[0].links[0].from_node,node_links.from_node.inputs[0],initJson)
                 
                 
 #               if (node_links.from_node.inputs[2].links[0].from_node.name == "Glossy BSDF"):
