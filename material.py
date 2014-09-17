@@ -15,11 +15,11 @@ def addToShade(fileName, initJson,currentNode):
    
     
     #Here we search for the return statement
-    for i in range(0,len(initJson["body"][0]["body"]["body"])):
-      if initJson["body"][0]["body"]["body"][i]["type"] == "ReturnStatement" :
+    for iter in range(0,len(initJson["body"][0]["body"]["body"])):
+      if initJson["body"][0]["body"]["body"][iter]["type"] == "ReturnStatement" :
         break; 
     
-    if initJson["body"][0]["body"]["body"][i]["argument"]["type"] == "CallExpression":
+    if initJson["body"][0]["body"]["body"][iter]["argument"]["type"] == "CallExpression":
         fileName = fileName+ "_toShade.json"
     else:
         fileName = fileName+ ".json"
@@ -31,9 +31,9 @@ def addToShade(fileName, initJson,currentNode):
     nodeName = re.search(r"Refraction BSDF*|Glass BSDF*",currentNode.name)
     #for reflection alone we do not add the fresnel call
     if nodeName and (fileName == "addRefract.json" or fileName == "addRefract_toShade.json"):
-       nodeName = re.search(r"Mix Shader*",currentNode.outputs['BSDF'].links[0].to_node.name)
-       if nodeName:
-           addFunction_call('fresnel.json',currentNode,currentNode.outputs['BSDF'].links[0].to_node.inputs[0],initJson) 
+    #    nodeName = re.search(r"Mix Shader*",currentNode.outputs['BSDF'].links[0].to_node.name)
+    #    if nodeName:
+         addFunction_call('fresnel.json',currentNode,currentNode.outputs['BSDF'].links[0].to_node.inputs[0],initJson) 
 
 
 
@@ -64,28 +64,55 @@ def addToShade(fileName, initJson,currentNode):
                     if addBSDF["arguments"][i]["right"]["type"]=="MemberExpression" and addBSDF["arguments"][i]["right"]["property"]["name"] == "eta":
                         addBSDF["arguments"][i]["right"]["property"]["name"] = currentNode.name.replace(".","").replace(" ", "")+ "IOR"
                       
-                            
-                    
     
-    #Here we search for the return statement
-    for i in range(0,len(initJson["body"][0]["body"]["body"])):
-        if initJson["body"][0]["body"]["body"][i]["type"] == "ReturnStatement" :
-            break; 
+    #multiply the mixshader factor to the colors
+    #we check if the next node of current node is mix shader then it should multiply the color to the mix shader factor
+    nodeName = re.search(r"Mix Shader*",currentNode.outputs['BSDF'].links[0].to_node.name)
+    if nodeName:
+      
+      if currentNode.outputs['BSDF'].links[0].to_node.inputs[0].is_linked:
+        tmpName = currentNode.outputs['BSDF'].links[0].to_node.inputs[0].links[0].from_node.name.replace(".","").replace(" ", "")+currentNode.outputs['BSDF'].links[0].to_node.inputs[0].name.replace(".","").replace(" ", "")
+        name ={"type":"Identifier","name":tmpName} 
+      else:
+        tmpName=currentNode.outputs['BSDF'].links[0].to_node.name.replace(".","").replace(" ", "")+currentNode.outputs['BSDF'].links[0].to_node.inputs[0].name.replace(".","").replace(" ", "")
+        name= {"type":"MemberExpression","computed":False,"object":{"type":"Identifier","name":"env"},"property":{"type":"Identifier","name":tmpName}}
+        
+      
+      for i in range(0,len(addBSDF["arguments"])):
+        if addBSDF["arguments"][i]["type"]=="MemberExpression" and  addBSDF["arguments"][i]["property"]["name"]==  currentNode.name.replace(".","").replace(" ", "")+ "Color":
+           tmpList = copy.deepcopy(addBSDF["arguments"][i])
+           addBSDF["arguments"].pop(i)
+           if currentNode.name==currentNode.outputs['BSDF'].links[0].to_node.inputs[1].links[0].from_node.name:
+             addBSDF["arguments"].insert(i,{"type":"CallExpression","callee":{"type":"MemberExpression","computed":False,"object":tmpList,"property":{"type": "Identifier","name": "mul"}},"arguments":[name] })
+           else:
+              if currentNode.name==currentNode.outputs['BSDF'].links[0].to_node.inputs[2].links[0].from_node.name:
+                addBSDF["arguments"].insert(i,{"type":"CallExpression","callee":{"type":"MemberExpression","computed":False,"object":tmpList,"property":{"type": "Identifier","name": "mul"}},"arguments":[{"type":"BinaryExpression","operator":"-","left":{"type":"Literal","value":1,"raw":"1"},"right":name}] })    
+       
+       
+        if addBSDF["arguments"][i]["type"]=="Identifier" and  addBSDF["arguments"][i]["name"]==  currentNode.name.replace(".","").replace(" ", "")+ "Color":     
+          tmpList = copy.deepcopy(addBSDF["arguments"][i])
+          addBSDF["arguments"].pop(i)
+          
+          if currentNode.name==currentNode.outputs['BSDF'].links[0].to_node.inputs[1].links[0].from_node.name:
+            addBSDF["arguments"].insert(i,{"type":"CallExpression","callee":{"type":"MemberExpression","computed":False,"object":tmpList,"property":{"type": "Identifier","name": "mul"}},"arguments":[name] })
+          else:                    
+            if currentNode.name==currentNode.outputs['BSDF'].links[0].to_node.inputs[2].links[0].from_node.name:
+              addBSDF["arguments"].insert(i,{"type":"CallExpression","callee":{"type":"MemberExpression","computed":False,"object":tmpList,"property":{"type": "Identifier","name": "mul"}},"arguments":[{"type":"BinaryExpression","operator":"-","left":{"type":"Literal","value":1,"raw":"1"},"right":name}] })
+
     
     
     
-    
-    if initJson["body"][0]["body"]["body"][i]["argument"]["type"] != "CallExpression":
-        initJson["body"][0]["body"]["body"][i]["argument"] = addBSDF
+    if initJson["body"][0]["body"]["body"][iter]["argument"]["type"] != "CallExpression":
+        initJson["body"][0]["body"]["body"][iter]["argument"] = addBSDF
     else:  
-        objectAst = copy.deepcopy(initJson["body"][0]["body"]["body"][i]["argument"])
-        initJson["body"][0]["body"]["body"][i]["argument"]["callee"] = {}
-        initJson["body"][0]["body"]["body"][i]["argument"]["callee"]["object"] = objectAst
-        initJson["body"][0]["body"]["body"][i]["argument"]["callee"]["type"] = "MemberExpression"
-        initJson["body"][0]["body"]["body"][i]["argument"]["callee"]["computed"] = False
-        initJson["body"][0]["body"]["body"][i]["argument"]["arguments"]= addBSDF["arguments"]
-        initJson["body"][0]["body"]["body"][i]["argument"]["callee"]["property"] = addBSDF["property"]
-        initJson["body"][0]["body"]["body"][i]["argument"]["type"] = "CallExpression"    
+        objectAst = copy.deepcopy(initJson["body"][0]["body"]["body"][iter]["argument"])
+        initJson["body"][0]["body"]["body"][iter]["argument"]["callee"] = {}
+        initJson["body"][0]["body"]["body"][iter]["argument"]["callee"]["object"] = objectAst
+        initJson["body"][0]["body"]["body"][iter]["argument"]["callee"]["type"] = "MemberExpression"
+        initJson["body"][0]["body"]["body"][iter]["argument"]["callee"]["computed"] = False
+        initJson["body"][0]["body"]["body"][iter]["argument"]["arguments"]= addBSDF["arguments"]
+        initJson["body"][0]["body"]["body"][iter]["argument"]["callee"]["property"] = addBSDF["property"]
+        initJson["body"][0]["body"]["body"][iter]["argument"]["type"] = "CallExpression"    
 
         
 
